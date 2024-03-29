@@ -1,0 +1,167 @@
+<div class="container">
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th><input type="text" placeholder="Variable X" id="inputX" /></th>
+        <th><input type="text" placeholder="Variable Y" id="inputY" /></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="number" class="input-x" /></td>
+        <td><input type="number" class="input-y" /></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="button">
+    <button id="agregarFila">Agregar Fila ✅</button>
+    <button id="eliminarFila">Eliminar Fila ⛔</button>
+    <button id="graficar">Graficar 📈</button>
+  </div>
+
+  <div id="content-text"></div>
+  <div class="content-graph">
+    <div id="graph-container"></div>
+    <div id="data-table"></div>
+  </div>
+</div>
+
+<style is:global>
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+  }
+  .content-graph {
+    display: flex;
+  }
+
+  #graph-container {
+    flex: 0 0 90%; /* El div graph-container ocupará el 90% del espacio sin crecer ni encoger */
+  }
+
+  #data-table {
+    flex: 0 0 10%; /* El div data-table ocupará el 10% del espacio sin crecer ni encoger */
+    text-align: center;
+    transition: transform 0.2s;
+  }
+
+  #data-table:hover {
+    transform: scale(1.1); /* Agrandar el punto al pasar el mouse por encima */
+    margin: 2%;
+  }
+
+  @media (max-width: 500px) {
+    .content-graph {
+      flex-direction: column; /* Cambia la dirección de los elementos a vertical */
+    }
+
+    #graph-container {
+      flex: 0 0 100%; /* El div graph-container ocupará el 100% del espacio sin crecer ni encoger */
+    }
+
+    #data-table {
+      flex: 0 0 100%; /* El div data-table ocupará el 100% del espacio sin crecer ni encoger */
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .button {
+    text-align: center; /* Centra los elementos en la fila */
+  }
+
+  .button button {
+    font-size: 14px;
+    padding: 16px;
+    margin: 13px 10px; /* Margen entre los botones */
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  #agregarFila {
+    background: #1f7a0d;
+  }
+  #eliminarFila {
+    background: #a00;
+  }
+  #graficar {
+    background: #0077a0;
+  }
+  th input {
+    background: transparent; /* Fondo transparente */
+    color: white; /* Texto blanco */
+    font-size: 19px; /* Tamaño de fuente 14px */
+    border: none; /* Sin borde */
+    width: 100%; /* Ancho completo del input */
+    box-sizing: border-box; /* Incluye el padding y el borde en el ancho total */
+  }
+  th,
+  td {
+    border: 1px solid #555;
+    padding: 8px;
+  }
+
+  input {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #555;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #777;
+  }
+  #graph-container {
+    //background-color: #222; /* Color de fondo oscuro */
+    color: white; /* Color del texto */
+    font-family: Arial, sans-serif; /* Fuente del texto */
+    padding: 3%;
+    border-radius: 5px; /* Bordes redondeados */
+    transition: transform 0.2s;
+  }
+
+  #graph-container svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  #graph-container text {
+    font-size: 14px; /* Tamaño de fuente para el texto */
+  }
+
+  #graph-container path {
+    stroke: red; /* Color de la línea de tendencia */
+  }
+
+  #graph-container circle {
+    fill: steelblue; /* Color de los puntos de dispersión */
+    opacity: 0.7; /* Opacidad de los puntos */
+  }
+  #graph-container:hover {
+    transform: scale(1.1);
+    margin: 2%;
+  }
+  #content-text {
+    text-align: center;
+    font-size: medium;
+    transition: transform 0.2s;
+  }
+  #content-text:hover {
+    transform: scale(1.1);
+    margin: 2%;
+  }
+</style>
+
+<script>
+  import "../js/index.js";
+</script>
