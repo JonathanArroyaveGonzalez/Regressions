@@ -31,7 +31,6 @@ document.getElementById("graficar").addEventListener("click", function () {
   });
 
   if (data.length > 0) {
-
     Swal.fire({
       title: "Seleccione el tipo de regresión que desea realizar.",
       showDenyButton: true,

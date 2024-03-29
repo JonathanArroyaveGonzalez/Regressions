@@ -1,6 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
+import { Image } from 'astro:assets';
+import paso1 from '../assets/paso1.png';
+import paso2 from '../assets/paso2.png';
+import paso3 from '../assets/paso3.png';  
+import paso4 from '../assets/paso4.png';
+import paso5 from '../assets/paso5.png';
+import paso6 from '../assets/paso6.png';
 ---
 
 <Layout title="Tutorial">
@@ -44,27 +51,18 @@ import Card from "../components/Card.astro";
         filas existentes, respectivamente, facilitando así la gestión de los
         datos mostrados.
       </p>
-      <img
-        src="../../src/assets/paso1.png"
-        alt="Agregando y eliminando filas de la tabla de datos"
-      />
+      <Image src={paso1} alt="Botones para agregar y eliminar filas" />
       <h2>2. Realizar una regresión</h2>
       <p>
         Una vez que los datos estén registrados en la tabla, simplemente haz
         clic en el botón "Graficar" para generar el gráfico correspondiente.
       </p>
-      <img
-        src="../../src/assets/paso2.png"
-        alt="Botón para graficar los datos"
-      />
+      <Image src={paso2} alt="Botón para graficar" />
       <p>
         Aparecerá una ventana emergente en la que deberás seleccionar el tipo de
         regresión que deseas realizar, ya sea lineal o cuadrática.
       </p>
-      <img
-        src="../../src/assets/paso3.png"
-        alt="Selección del tipo de regresión"
-      />
+      <Image src={paso3} alt="Selección del tipo de regresión" />
 
       <h2>3. Resultados de la regresión</h2>
       <p>
@@ -73,27 +71,20 @@ import Card from "../components/Card.astro";
         se proporcionará información sobre la ecuación de la funcion de
         regresión y el coeficiente de correlación.
       </p>
-      <img src="../../src/assets/paso4.png" alt="Resultados de la regresión" />
-
+      <Image src={paso4} alt="Resultados de la regresión" />
       <h2>4. Personalización de las variables</h2>
       <p>
         Por defecto, las variables se denominan X e Y, pero puedes personalizar
         estos valores ingresando el nombre deseado.
       </p>
-      <img
-        src="../../src/assets/paso5.png"
-        alt="Personalización de las variables"
-      />
+      <Image src={paso5} alt="Personalización de las variables" />
       <p>
         Los valores ingresados se tomarán para crear la ecuación y la tabla de
         datos. Puedes personalizar esta configuración antes o después de
         graficar. Si ya tienes la gráfica, simplemente ingresa los nuevos
         valores y vuelve a graficar para aplicar los cambios.
       </p>
-      <img
-        src="../../src/assets/paso6.png"
-        alt="Personalización de las variables"
-      />
+      <Image src={paso6} alt="Personalización de las variables" />
       <p>
         ¡Listo! Ahora ya sabes cómo utilizar la herramienta de regresiones para
         analizar tus datos y obtener información valiosa sobre la relación entre
