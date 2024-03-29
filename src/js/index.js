@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import Swal from "sweetalert2";
+import * as Swal from "sweetalert2";
 
 document.getElementById("agregarFila").addEventListener("click", function () {
   let tabla = document.getElementById("tabla").getElementsByTagName("tbody")[0];
