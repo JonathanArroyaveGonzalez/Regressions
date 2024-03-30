@@ -46,7 +46,7 @@ document.getElementById("graficar").addEventListener("click", function () {
       imageUrl: "https://i.gifer.com/YaDc.gif",
       imageWidth: 400,
       imageHeight: 200,
-      imageAlt: "Custom image",
+      imageAlt: "Animación Funciones 📈",
     }).then((result) => {
 
       if (result.isConfirmed) {
@@ -61,11 +61,10 @@ document.getElementById("graficar").addEventListener("click", function () {
 });
 
 function drawGraph(data) {
-  const margin = { top: 20, right: 20, bottom: 90, left: 90 }; // Aumentamos el espacio inferior para dejar espacio al texto
+  const margin = { top: 20, right: 20, bottom: 90, left: 90 }; 
 
   let inputX = document.getElementById("inputX").value;
   let inputY = document.getElementById("inputY").value;
-  //Inicializar el nombre de las variables por defecto x,y
 
   if (inputX.trim() === "" && inputY.trim() === "") {
     inputX = "X";

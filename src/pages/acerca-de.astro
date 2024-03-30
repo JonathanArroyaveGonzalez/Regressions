@@ -34,16 +34,11 @@ import Card from "../components/Card.astro";
           </linearGradient>
         </defs>
       </svg>
-      <h1>Acerca <span class="text-gradient">De</span></h1>
-
-      <p>
-        ¡Bienvenido a nuestra plataforma web diseñada especialmente para
-        estudiantes apasionados por la física!
-      </p> Esta herramienta práctica está destinada a ayudarte a comprender y aplicar
-      tanto la regresión lineal como la regresion cuadratica en tus experimentos
-      físicos, haciéndolos más accesibles y comprensibles.
+      <a href="/Regressions/"><h1 class="inicio">Acerca <span class="text-gradient">De ...</span></h1></a>
+      <p>Nuestra herramienta práctica está diseñada para facilitar tu comprensión y aplicación tanto de la regresión lineal como de la regresión cuadrática en tus experimentos físicos. Desarrollamos esta aplicación utilizando el framework Astro y la librería D3.js para la visualización de datos. Nuestro objetivo es continuar mejorando la funcionalidad de la aplicación. Por ello, nuestro repositorio de código abierto está disponible en GitHub para que puedas contribuir y ayudarnos a perfeccionarla. 
+    </p>
     </body>
-    <h2>¿Qué es esta aplicación?</h2>
+    <h2>¿Qué es esta aplicación? </h2>
     <p>
       Nuestra aplicación web es una herramienta poderosa diseñada para ayudarte
       a visualizar y analizar datos de una manera rápida y sencilla. Con nuestra
@@ -133,6 +128,19 @@ import Card from "../components/Card.astro";
 </Layout>
 
 <style>
+  a {
+    text-decoration: none; 
+    color: inherit; 
+}
+.inicio {
+    text-align: center;
+    transition: transform 0.3s;
+  }
+  .inicio:hover {
+    transform: scale(1.2);
+    margin: 2%;
+  }
+
   h2 {
     text-align: center;
   }
