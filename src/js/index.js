@@ -51,11 +51,11 @@ document.getElementById("graficar").addEventListener("click", function () {
 
       if (result.isConfirmed) {
         drawGraph(data);
+        data = [];
       } else if (result.isDenied) {
         drawGraph2(data);
-      } else {
         data = [];
-      }
+      } 
     });
   }
 });
@@ -187,7 +187,10 @@ function drawGraph(data) {
     )} ${inputX}  ${intercept.toFixed(2)} `;
   }
 
-  const rSquaredText = `R² = ${coefficientOfDetermination.toFixed(5)}`;
+  let rSquaredText = ` ✅ R² = ${coefficientOfDetermination.toFixed(5)} ✅`;
+   if (coefficientOfDetermination <= 0.6 && coefficientOfDetermination >= 1.4) {
+    rSquaredText = `❌ R² = ${coefficientOfDetermination.toFixed(5)} ❌ <strong>El ajuste no es bueno revise sus datos.</strong>`;
+   }
   const titleG = `${inputY} Frente a ${inputX}`;
 
   //Insetar los datos de la tabla en el contenedor
@@ -321,11 +324,22 @@ function drawGraph2(data) {
     .attr("d", line)
     .attr("opacity", 0.8);
 
-  const equationText = `${inputY} = ${a.toFixed(4)} ${inputX}² + ${b.toFixed(
-    4
-  )} ${inputX} + ${c.toFixed(4)}`;
+    let equationText = `${inputY} = ${c.toFixed(2)} ${inputX}² + ${b.toFixed(2)} ${inputX} + ${a.toFixed(2)}`;
 
-  const rSquaredText = `R² = ${coefficientOfDetermination.toFixed(5)}`;
+    if (b < 0) {
+      equationText = `${inputY} = ${c.toFixed(2)} ${inputX}²  ${b.toFixed(2)} ${inputX} + ${a.toFixed(2)}`;
+    }
+    else if (c < 0) {
+      equationText = `${inputY} = ${c.toFixed(2)} ${inputX}² + ${b.toFixed(2)} ${inputX}  ${a.toFixed(2)}`;
+    }
+    else if (b < 0 && c < 0) {
+      equationText = `${inputY} = ${c.toFixed(2)} ${inputX}²  ${b.toFixed(2)} ${inputX}  ${a.toFixed(2)}`;
+    }
+        
+  let rSquaredText = ` ✅ R² = ${coefficientOfDetermination.toFixed(5)} ✅`;
+  if (coefficientOfDetermination <= 0.6 && coefficientOfDetermination >= 1.4)  {
+    rSquaredText = `❌ R² = ${coefficientOfDetermination.toFixed(5)} ❌ <strong>El ajuste no es bueno revise sus datos.</strong>`;
+   }
   //Insertar los datos de la tabla en el contenedor
   insertDataTable(
     equationText,
@@ -347,7 +361,7 @@ function insertDataTable(
 ) {
   let dataTable = document.getElementById("data-table");
   let contentText = document.getElementById("content-text");
-  contentText.innerHTML = `🔺 ${titleG} 🔻<br>↪︎ ${equationText} ↩︎<br> ✅ ${rSquaredText} ✅`;
+  contentText.innerHTML = `🔺 ${titleG} 🔻<br>↪︎ ${equationText} ↩︎<br>  ${rSquaredText} `;
 
   // Crear la estructura de la tabla
   let tableHTML = `<table><thead><tr><th>${inputX}➡️</th><th>${inputY}⬆️</th></tr></thead><tbody>`;
