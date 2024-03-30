@@ -188,7 +188,7 @@ function drawGraph(data) {
   }
 
   let rSquaredText = ` ✅ R² = ${coefficientOfDetermination.toFixed(5)} ✅`;
-   if (coefficientOfDetermination <= 0.6 && coefficientOfDetermination >= 1.4) {
+   if (coefficientOfDetermination <= 0.6 || coefficientOfDetermination >= 1.4) {
     rSquaredText = `❌ R² = ${coefficientOfDetermination.toFixed(5)} ❌ <strong>El ajuste no es bueno revise sus datos.</strong>`;
    }
   const titleG = `${inputY} Frente a ${inputX}`;
@@ -337,7 +337,7 @@ function drawGraph2(data) {
     }
         
   let rSquaredText = ` ✅ R² = ${coefficientOfDetermination.toFixed(5)} ✅`;
-  if (coefficientOfDetermination <= 0.6 && coefficientOfDetermination >= 1.4)  {
+  if (coefficientOfDetermination <= 0.6 || coefficientOfDetermination >= 1.4)  {
     rSquaredText = `❌ R² = ${coefficientOfDetermination.toFixed(5)} ❌ <strong>El ajuste no es bueno revise sus datos.</strong>`;
    }
   //Insertar los datos de la tabla en el contenedor
