@@ -1,7 +1,7 @@
-# Astro Starter Kit: Basics
+# Regresiones lineales y cuadraticas : clona el proyecto
 
 ```sh
-npm create astro@latest -- --template basics
+git clone https://github.com/JonathanArroyaveGonzalez/Regressions.git
 ```
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
