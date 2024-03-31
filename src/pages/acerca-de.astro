@@ -34,11 +34,23 @@ import Card from "../components/Card.astro";
           </linearGradient>
         </defs>
       </svg>
-      <a href="/Regressions/" class="titulo"><h1 class="inicio">Acerca <span class="text-gradient">De ...</span></h1></a>
-      <p>Nuestra herramienta práctica está diseñada para facilitar tu comprensión y aplicación tanto de la regresión lineal como de la regresión cuadrática en tus experimentos físicos. Desarrollamos esta aplicación utilizando el framework Astro y la librería D3.js para la visualización de datos. Nuestro objetivo es continuar mejorando la funcionalidad de la aplicación. Por ello, nuestro repositorio de código abierto está disponible en GitHub para que puedas contribuir y ayudarnos a perfeccionarla. 
-    </p>
+      <a href="/Regressions/" class="titulo"
+        ><h1 class="inicio">
+          Acerca <span class="text-gradient">De ...</span>
+        </h1></a
+      >
+      <p>
+        Nuestra herramienta práctica está diseñada para facilitar tu comprensión
+        y aplicación tanto de la regresión lineal como de la regresión
+        cuadrática en tus experimentos físicos. Desarrollamos esta aplicación
+        utilizando el framework Astro y la librería D3.js para la visualización
+        de datos. Nuestro objetivo es continuar mejorando la funcionalidad de la
+        aplicación. Por ello, nuestro repositorio de código abierto está
+        disponible en GitHub para que puedas contribuir y ayudarnos a
+        perfeccionarla.
+      </p>
     </body>
-    <h2>¿Qué es esta aplicación? </h2>
+    <h2>¿Qué es esta aplicación?</h2>
     <p>
       Nuestra aplicación web es una herramienta poderosa diseñada para ayudarte
       a visualizar y analizar datos de una manera rápida y sencilla. Con nuestra
@@ -103,11 +115,17 @@ import Card from "../components/Card.astro";
       tutorial.
     </p>
     <div class="button-container">
-      <a href="/Regressions/tutorial/" class="button-tutorial">Ver tutorial 🚀</a>
+      <a href="/Regressions/tutorial/" class="button-tutorial"
+        >Ver tutorial 🚀</a
+      >
     </div>
     <br /><br />
     <ul role="list" class="link-card-grid">
-      <Card href="/Regressions/" title="Inicio ⬆️" body="Regresar a la pagina de inicio." />
+      <Card
+        href="/Regressions/"
+        title="Inicio ⬆️"
+        body="Regresar a la pagina de inicio."
+      />
       <Card
         href="https://ebac.mx/blog/regreson-lineal"
         title="Documentacion regresión lineal 📚"
@@ -129,15 +147,15 @@ import Card from "../components/Card.astro";
 
 <style>
   .titulo {
-    text-decoration: none; 
-    color: inherit; 
-}
-.inicio {
+    text-decoration: none;
+    color: inherit;
+  }
+  .inicio {
     text-align: center;
-    transition: transform 0.3s;
+    transition: transform 0.3s ease-in-out;
   }
   .inicio:hover {
-    transform: scale(1.2);
+    transform: scale(1.05);
     margin: 2%;
   }
 

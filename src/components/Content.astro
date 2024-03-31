@@ -42,11 +42,11 @@
   #data-table {
     flex: 0 0 10%; /* El div data-table ocupará el 10% del espacio sin crecer ni encoger */
     text-align: center;
-    transition: transform 0.2s;
+    transition: transform 0.3s ease-in-out;
   }
 
   #data-table:hover {
-    transform: scale(1.1); /* Agrandar el punto al pasar el mouse por encima */
+    transform: scale(1.1);
     margin: 2%;
   }
 
@@ -89,12 +89,12 @@
     background: #0077a0;
   }
   th input {
-    background: transparent; 
-    color: white; 
+    background: transparent;
+    color: white;
     font-size: 19px;
-    border: none; 
-    width: 100%; 
-    box-sizing: border-box; 
+    border: none;
+    width: 100%;
+    box-sizing: border-box;
   }
   th,
   td {
@@ -122,11 +122,11 @@
     background-color: #777;
   }
   #graph-container {
-    color: white; 
-    font-family: Arial, sans-serif; 
+    color: white;
+    font-family: Arial, sans-serif;
     padding: 3%;
-    border-radius: 5px; 
-    transition: transform 0.2s;
+    border-radius: 5px;
+    transition: transform 0.3s ease-in-out;
   }
 
   #graph-container svg {
@@ -135,16 +135,16 @@
   }
 
   #graph-container text {
-    font-size: 14px; 
+    font-size: 14px;
   }
 
   #graph-container path {
-    stroke: red; 
+    stroke: red;
   }
 
   #graph-container circle {
-    fill: steelblue; 
-    opacity: 0.7; 
+    fill: steelblue;
+    opacity: 0.7;
   }
   #graph-container:hover {
     transform: scale(1.1);
@@ -153,10 +153,10 @@
   #content-text {
     text-align: center;
     font-size: medium;
-    transition: transform 0.2s;
+    transition: transform 0.3s ease-in-out;
   }
   #content-text:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     margin: 2%;
   }
 </style>

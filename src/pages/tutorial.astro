@@ -1,13 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
-import { Image } from 'astro:assets';
-import paso1 from '../assets/paso1.png';
-import paso2 from '../assets/paso2.png';
-import paso3 from '../assets/paso3.png';  
-import paso4 from '../assets/paso4.png';
-import paso5 from '../assets/paso5.png';
-import paso6 from '../assets/paso6.png';
+import { Image } from "astro:assets";
+import paso1 from "../assets/paso1.png";
+import paso2 from "../assets/paso2.png";
+import paso3 from "../assets/paso3.png";
+import paso4 from "../assets/paso4.png";
+import paso5 from "../assets/paso5.png";
+import paso6 from "../assets/paso6.png";
 ---
 
 <Layout title="Tutorial">
@@ -41,7 +41,11 @@ import paso6 from '../assets/paso6.png';
           </linearGradient>
         </defs>
       </svg>
-      <a href="/Regressions/"><h1 class="inicio">Tutorial <span class="text-gradient">Regresiones</span></h1></a>
+      <a href="/Regressions/"
+        ><h1 class="inicio">
+          Tutorial <span class="text-gradient">Regresiones</span>
+        </h1></a
+      >
       <h2>1. Agregando Filas</h2>
       <p>
         Para modificar la tabla de datos, simplemente se deben utilizar los
@@ -50,18 +54,22 @@ import paso6 from '../assets/paso6.png';
         filas existentes, respectivamente, facilitando así la gestión de los
         datos mostrados.
       </p>
-      <Image src={paso1} alt="Botones para agregar y eliminar filas" class="paso"/>
+      <Image
+        src={paso1}
+        alt="Botones para agregar y eliminar filas"
+        class="paso"
+      />
       <h2>2. Realizar una regresión</h2>
       <p>
         Una vez que los datos estén registrados en la tabla, simplemente haz
         clic en el botón "Graficar" para generar el gráfico correspondiente.
       </p>
-      <Image src={paso2} alt="Botón para graficar"  class="paso"/>
+      <Image src={paso2} alt="Botón para graficar" class="paso" />
       <p>
         Aparecerá una ventana emergente en la que deberás seleccionar el tipo de
         regresión que deseas realizar, ya sea lineal o cuadrática.
       </p>
-      <Image src={paso3} alt="Selección del tipo de regresión"  class="paso"/>
+      <Image src={paso3} alt="Selección del tipo de regresión" class="paso" />
 
       <h2>3. Resultados de la regresión</h2>
       <p>
@@ -70,21 +78,20 @@ import paso6 from '../assets/paso6.png';
         se proporcionará información sobre la ecuación de la funcion de
         regresión y el coeficiente de correlación.
       </p>
-      <Image src={paso4} 
-      alt="Resultados de la regresión" class="paso" />
+      <Image src={paso4} alt="Resultados de la regresión" class="paso" />
       <h2>4. Personalización de las variables</h2>
       <p>
         Por defecto, las variables se denominan X e Y, pero puedes personalizar
         estos valores ingresando el nombre deseado.
       </p>
-      <Image src={paso5} alt="Personalización de las variables" class="paso"/>
+      <Image src={paso5} alt="Personalización de las variables" class="paso" />
       <p>
         Los valores ingresados se tomarán para crear la ecuación y la tabla de
         datos. Puedes personalizar esta configuración antes o después de
         graficar. Si ya tienes la gráfica, simplemente ingresa los nuevos
         valores y vuelve a graficar para aplicar los cambios.
       </p>
-      <Image src={paso6} alt="Personalización de las variables" class="paso"/>
+      <Image src={paso6} alt="Personalización de las variables" class="paso" />
       <p>
         ¡Listo! Ahora ya sabes cómo utilizar la herramienta de regresiones para
         analizar tus datos y obtener información valiosa sobre la relación entre
@@ -107,22 +114,28 @@ import paso6 from '../assets/paso6.png';
     </body>
   </main>
   <style>
-a {
-    text-decoration: none; 
-    color: inherit; 
-}
-.inicio {
-    text-align: center;
-    transition: transform 0.3s;
-  }
-  .inicio:hover {
-    transform: scale(1.2);
-    margin: 2%;
-  }
-.paso{
-  max-width: 100%;
-  height: auto;
-}
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .inicio {
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
+    }
+    .inicio:hover {
+      transform: scale(1.05);
+      margin: 2%;
+    }
+    .paso {
+      border-radius: 10px;
+      max-width: 100%;
+      height: auto;
+      transition: transform 0.3s ease-in-out;
+    }
+    .paso:hover {
+      transform: scale(1.05);
+      margin: 1%;
+    }
 
     main {
       margin: auto;

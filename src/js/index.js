@@ -48,20 +48,19 @@ document.getElementById("graficar").addEventListener("click", function () {
       imageHeight: 200,
       imageAlt: "Animación Funciones 📈",
     }).then((result) => {
-
       if (result.isConfirmed) {
         drawGraph(data);
         data = [];
       } else if (result.isDenied) {
         drawGraph2(data);
         data = [];
-      } 
+      }
     });
   }
 });
 
 function drawGraph(data) {
-  const margin = { top: 20, right: 20, bottom: 90, left: 90 }; 
+  const margin = { top: 20, right: 20, bottom: 90, left: 90 };
 
   let inputX = document.getElementById("inputX").value;
   let inputY = document.getElementById("inputY").value;
@@ -188,9 +187,11 @@ function drawGraph(data) {
   }
 
   let rSquaredText = ` ✅ R² = ${coefficientOfDetermination.toFixed(5)} ✅`;
-   if (coefficientOfDetermination <= 0.6 && coefficientOfDetermination >= 1.4) {
-    rSquaredText = `❌ R² = ${coefficientOfDetermination.toFixed(5)} ❌ <strong>El ajuste no es bueno revise sus datos.</strong>`;
-   }
+  if (coefficientOfDetermination <= 0.6 && coefficientOfDetermination >= 1.4) {
+    rSquaredText = `❌ R² = ${coefficientOfDetermination.toFixed(
+      5
+    )} ❌ <strong>El ajuste no es bueno revise sus datos.</strong>`;
+  }
   const titleG = `${inputY} Frente a ${inputX}`;
 
   //Insetar los datos de la tabla en el contenedor
@@ -324,22 +325,30 @@ function drawGraph2(data) {
     .attr("d", line)
     .attr("opacity", 0.8);
 
-    let equationText = `${inputY} = ${c.toFixed(2)} ${inputX}² + ${b.toFixed(2)} ${inputX} + ${a.toFixed(2)}`;
+  let equationText = `${inputY} = ${c.toFixed(2)} ${inputX}² + ${b.toFixed(
+    2
+  )} ${inputX} + ${a.toFixed(2)}`;
 
-    if (b < 0) {
-      equationText = `${inputY} = ${c.toFixed(2)} ${inputX}²  ${b.toFixed(2)} ${inputX} + ${a.toFixed(2)}`;
-    }
-    else if (c < 0) {
-      equationText = `${inputY} = ${c.toFixed(2)} ${inputX}² + ${b.toFixed(2)} ${inputX}  ${a.toFixed(2)}`;
-    }
-    else if (b < 0 && c < 0) {
-      equationText = `${inputY} = ${c.toFixed(2)} ${inputX}²  ${b.toFixed(2)} ${inputX}  ${a.toFixed(2)}`;
-    }
-        
+  if (b < 0) {
+    equationText = `${inputY} = ${c.toFixed(2)} ${inputX}²  ${b.toFixed(
+      2
+    )} ${inputX} + ${a.toFixed(2)}`;
+  } else if (c < 0) {
+    equationText = `${inputY} = ${c.toFixed(2)} ${inputX}² + ${b.toFixed(
+      2
+    )} ${inputX}  ${a.toFixed(2)}`;
+  } else if (b < 0 && c < 0) {
+    equationText = `${inputY} = ${c.toFixed(2)} ${inputX}²  ${b.toFixed(
+      2
+    )} ${inputX}  ${a.toFixed(2)}`;
+  }
+
   let rSquaredText = ` ✅ R² = ${coefficientOfDetermination.toFixed(5)} ✅`;
-  if (coefficientOfDetermination <= 0.6 && coefficientOfDetermination >= 1.4)  {
-    rSquaredText = `❌ R² = ${coefficientOfDetermination.toFixed(5)} ❌ <strong>El ajuste no es bueno revise sus datos.</strong>`;
-   }
+  if (coefficientOfDetermination <= 0.6 && coefficientOfDetermination >= 1.4) {
+    rSquaredText = `❌ R² = ${coefficientOfDetermination.toFixed(
+      5
+    )} ❌ <strong>El ajuste no es bueno revise sus datos.</strong>`;
+  }
   //Insertar los datos de la tabla en el contenedor
   insertDataTable(
     equationText,
