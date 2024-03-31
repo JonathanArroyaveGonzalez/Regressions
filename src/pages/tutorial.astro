@@ -8,6 +8,7 @@ import paso3 from "../assets/paso3.png";
 import paso4 from "../assets/paso4.png";
 import paso5 from "../assets/paso5.png";
 import paso6 from "../assets/paso6.png";
+import paso7 from "../assets/paso7.png";
 ---
 
 <Layout title="Tutorial">
@@ -46,7 +47,7 @@ import paso6 from "../assets/paso6.png";
           Tutorial <span class="text-gradient">Regresiones</span>
         </h1></a
       >
-      <h2>1. Agregando Filas</h2>
+      <h2>1. Agregando Filas ✅</h2>
       <p>
         Para modificar la tabla de datos, simplemente se deben utilizar los
         botones "Agregar" y "Eliminar" ubicados en la parte inferior de la
@@ -59,7 +60,7 @@ import paso6 from "../assets/paso6.png";
         alt="Botones para agregar y eliminar filas"
         class="paso"
       />
-      <h2>2. Realizar una regresión</h2>
+      <h2>2. Realizar una regresión 📊</h2>
       <p>
         Una vez que los datos estén registrados en la tabla, simplemente haz
         clic en el botón "Graficar" para generar el gráfico correspondiente.
@@ -71,7 +72,7 @@ import paso6 from "../assets/paso6.png";
       </p>
       <Image src={paso3} alt="Selección del tipo de regresión" class="paso" />
 
-      <h2>3. Resultados de la regresión</h2>
+      <h2>3. Resultados de la regresión 🧾</h2>
       <p>
         Una vez seleccionado el tipo de regresión, se mostrará el gráfico
         correspondiente con la línea de regresión ajustada a los datos. Además,
@@ -79,7 +80,7 @@ import paso6 from "../assets/paso6.png";
         regresión y el coeficiente de correlación.
       </p>
       <Image src={paso4} alt="Resultados de la regresión" class="paso" />
-      <h2>4. Personalización de las variables</h2>
+      <h2>4. Personalización de las variables 🛠️</h2>
       <p>
         Por defecto, las variables se denominan X e Y, pero puedes personalizar
         estos valores ingresando el nombre deseado.
@@ -92,6 +93,12 @@ import paso6 from "../assets/paso6.png";
         valores y vuelve a graficar para aplicar los cambios.
       </p>
       <Image src={paso6} alt="Personalización de las variables" class="paso" />
+      <h2>5. Advertencia ⚠️</h2>
+      <p>
+        Es fundamental destacar que nuestra herramienta de regresiones no admite el cálculo con datos incompletos o valores no numéricos. Por tanto, es crucial garantizar la exactitud y la integridad de los datos ingresados antes de realizar cualquier análisis de regresión. Además, si el coeficiente de correlación obtenido durante la regresión cae en un rango fuera de 0.3 a respecto a 1, se considera que la regresión no es confiable y se mostrará una advertencia al usuario.
+      </p>
+      <Image src={paso7} alt="Personalización de las variables" class="paso" />
+      <h2>6. ¡Listo! 🎉</h2>
       <p>
         ¡Listo! Ahora ya sabes cómo utilizar la herramienta de regresiones para
         analizar tus datos y obtener información valiosa sobre la relación entre
@@ -107,7 +114,7 @@ import paso6 from "../assets/paso6.png";
         />
         <Card
           href="/Regressions/acerca-de/"
-          title="Acerca de 🚀"
+          title="Acerca de 💡"
           body="Información sobre nosotros y el proyecto."
         />
       </ul>
