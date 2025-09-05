@@ -116,7 +116,7 @@ import Content from "../components/Content.astro";
 
   <!-- El script de tema ya está incluido globalmente desde Layout.astro -->
   <script type="module">
-    import { downloadElementAsImage } from '/src/js/download.js';
+  import { downloadElementAsImage } from '/download.js';
     document.getElementById('download-btn').addEventListener('click', function() {
       // Clonar ecuación, gráfica y tabla al contenedor de exportación
       const contentText = document.getElementById('content-text');
@@ -151,7 +151,7 @@ import Content from "../components/Content.astro";
       }, 100);
     });
   </script>
-  <script type="module" src="/src/js/download.js"></script>
+  <script type="module" src="/download.js"></script>
   <style>
     html.light-theme {
       --accent: 136, 58, 234;
