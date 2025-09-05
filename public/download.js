@@ -1,11 +1,18 @@
-import { Canvg } from 'canvg';
-import html2canvas from 'html2canvas';
+// Importamos las bibliotecas necesarias desde CDNs para uso en el navegador
+// En lugar de importar directamente, cargaremos estas bibliotecas desde CDN
+// y definimos nuestras propias implementaciones simplificadas
 
+// Función para descargar un elemento como imagen
 export async function downloadElementAsImage(elementId, filename = 'descarga.png') {
   const element = document.getElementById(elementId);
   if (!element) return;
   
   try {
+    // Cargamos html2canvas desde CDN si aún no está cargado
+    if (typeof html2canvas !== 'function') {
+      await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+    }
+    
     // Crear un contenedor temporal para la composición
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'fixed';
@@ -239,4 +246,15 @@ async function addInlineStyles(svg) {
   });
   
   return new XMLSerializer().serializeToString(clone);
+}
+
+// Función para cargar un script externo de forma dinámica
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Error al cargar el script ${src}`));
+    document.head.appendChild(script);
+  });
 }

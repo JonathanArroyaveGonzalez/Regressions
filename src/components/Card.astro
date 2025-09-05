@@ -1,4 +1,6 @@
 ---
+import { getBaseUrl } from "../js/base-url.js";
+
 interface Props {
 	title: string;
 	body: string;
@@ -6,10 +8,14 @@ interface Props {
 }
 
 const { href, title, body } = Astro.props;
+const baseUrl = getBaseUrl();
+
+// Si href ya comienza con http o /, no agregar baseUrl
+const finalHref = href.startsWith('http') || href.startsWith('/') ? href : `${baseUrl}${href}`;
 ---
 
 <li class="link-card">
-	<a href={href}>
+	<a href={finalHref}>
 		<h2>
 			{title}
 			<span>&rarr;</span>

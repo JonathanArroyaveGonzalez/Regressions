@@ -1,21 +1,34 @@
-// Simple visitor counter using localStorage as fallback and a public API for real counts
-// This script fetches and updates a counter from a free API (countapi.xyz)
+// Simple visitor counter using localStorage as fallback
 (function() {
   const el = document.getElementById('visitor-counter');
   if (!el) return;
-  const NAMESPACE = 'regressions-demo'; // Puedes cambiarlo por algo único
-  const KEY = 'main-page';
-  const API = `https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`;
-
-  fetch(API)
-    .then(r => r.json())
-    .then(data => {
-      el.textContent = data.value;
+  
+  // Solo usamos localStorage para evitar errores de red
+  let count = parseInt(localStorage.getItem('visitor-counter') || '0', 10) + 1;
+  localStorage.setItem('visitor-counter', count);
+  el.textContent = count + '+';
+  
+  // Intento opcional de usar un servicio externo, si funciona
+  try {
+    const cacheBuster = new Date().getTime();
+    fetch(`https://api.countapi.xyz/hit/regressions-demo/main-page?${cacheBuster}`, { 
+      mode: 'no-cors',  // Intenta con no-cors para evitar errores CORS
+      cache: 'no-cache'
+    })
+    .then(r => {
+      // Solo actualizamos UI si funciona
+      if (r.ok && r.status === 200) {
+        r.json().then(data => {
+          if (data && data.value) {
+            el.textContent = data.value;
+          }
+        });
+      }
     })
     .catch(() => {
-      // fallback: localStorage
-      let count = parseInt(localStorage.getItem('visitor-counter') || '0', 10) + 1;
-      localStorage.setItem('visitor-counter', count);
-      el.textContent = count + '+';
+      // Silenciamos errores, ya estamos usando localStorage como fallback
     });
+  } catch(e) {
+    // Silenciamos errores
+  }
 })();
