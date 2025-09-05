@@ -1,6 +1,7 @@
 // Función para cargar librerías desde CDN
 async function loadScript(src) {
   return new Promise((resolve, reject) => {
+    // Verificar si ya está cargado
     if (document.querySelector(`script[src="${src}"]`)) {
       resolve();
       return;
@@ -8,26 +9,59 @@ async function loadScript(src) {
     
     const script = document.createElement('script');
     script.src = src;
-    script.onload = resolve;
-    script.onerror = reject;
+    script.onload = () => {
+      console.log(`Script cargado exitosamente: ${src}`);
+      resolve();
+    };
+    script.onerror = (error) => {
+      console.error(`Error al cargar script: ${src}`, error);
+      reject(new Error(`No se pudo cargar ${src}`));
+    };
     document.head.appendChild(script);
   });
 }
 
 export async function downloadElementAsImage(elementId, filename = 'descarga.png') {
   const element = document.getElementById(elementId);
-  if (!element) return;
+  if (!element) {
+    console.error('Elemento no encontrado:', elementId);
+    alert('No se encontró el elemento a descargar');
+    return;
+  }
   
   try {
+    console.log('Iniciando descarga de imagen...');
+    
     // Cargar las librerías necesarias desde CDN
+    console.log('Cargando html2canvas...');
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    
+    console.log('Cargando Canvg...');
     await loadScript('https://unpkg.com/canvg/lib/umd.js');
     
-    // Esperar a que Canvg esté disponible
-    while (!window.canvg) {
+    // Esperar a que html2canvas esté disponible
+    let attempts = 0;
+    while (typeof window.html2canvas !== 'function' && attempts < 50) {
       await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
     }
     
+    if (typeof window.html2canvas !== 'function') {
+      throw new Error('html2canvas no se cargó correctamente');
+    }
+    
+    // Esperar a que Canvg esté disponible
+    attempts = 0;
+    while (!window.canvg && attempts < 50) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+    
+    if (!window.canvg) {
+      throw new Error('Canvg no se cargó correctamente');
+    }
+    
+    console.log('Librerías cargadas exitosamente');
     const { Canvg } = window.canvg;
     
     // Crear un contenedor temporal para la composición
@@ -139,7 +173,8 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
     document.body.appendChild(tempContainer);
     
     // 4. Usar html2canvas para capturar todo el contenedor
-    const finalCanvas = await html2canvas(tempContainer, {
+    console.log('Capturando imagen con html2canvas...');
+    const finalCanvas = await window.html2canvas(tempContainer, {
       backgroundColor: '#ffffff', // Fondo blanco
       scale: 2, // Mayor calidad
       logging: false,
@@ -151,6 +186,7 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
     document.body.removeChild(tempContainer);
     
     // 5. Descargar la imagen
+    console.log('Generando descarga...');
     finalCanvas.toBlob((blob) => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -158,10 +194,12 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
       link.download = filename;
       link.click();
       URL.revokeObjectURL(url);
+      console.log('Descarga completada exitosamente');
     }, 'image/png');
     
   } catch (error) {
-    console.error('Error al generar la imagen:', error);
+    console.error('Error detallado al generar la imagen:', error);
+    alert(`Error al generar la imagen: ${error.message}`);
   }
 }
 
