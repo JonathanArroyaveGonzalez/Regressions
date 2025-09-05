@@ -6,6 +6,11 @@ import Content from "../components/Content.astro";
 
 <Layout title="Physical Regressions">
   <main>
+    <!-- Contenedor oculto solo para exportar la imagen -->
+    <div id="export-container" style="background: transparent; display:none; position: absolute; left: -9999px; top: 0;">
+      <div id="content-text-export"></div>
+      <div id="content-graph-export"></div>
+    </div>
     <svg
       class="astro-a"
       width="495"
@@ -69,7 +74,28 @@ import Content from "../components/Content.astro";
         >¡Explora y experimenta con confianza! 🚏</strong
       >
     </p>
+
     <Content />
+
+    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-bottom: 1rem;">
+      <button id="download-btn" style="padding: 0.5rem 1rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; background: #00B600; color: white;">⬇️ Descargar gráfica y tabla</button>
+    </div>
+
+    <!-- Visualización real de la gráfica y tabla debajo de la entrada de datos -->
+    <div id="content-text"></div>
+    <div class="content-graph">
+      <div id="graph-container"></div>
+      <div id="data-table"></div>
+    </div>
+
+    <!-- Contenedor oculto solo para exportar la imagen -->
+    <div id="export-container" style="background: transparent; display:none;">
+      <div id="content-text-export"></div>
+      <div class="content-graph">
+        <div id="graph-container-export"></div>
+        <div id="data-table-export"></div>
+      </div>
+    </div>
 
     <ul role="list" class="link-card-grid">
       <Card
@@ -85,7 +111,89 @@ import Content from "../components/Content.astro";
     </ul>
   </main>
 
+  <!-- El script de tema ya está incluido globalmente desde Layout.astro -->
+  <script type="module">
+    import { downloadElementAsImage } from '/src/js/download.js';
+    document.getElementById('download-btn').addEventListener('click', function() {
+      // Clonar ecuación, gráfica y tabla al contenedor de exportación
+      const contentText = document.getElementById('content-text');
+      const contentGraph = document.querySelector('.content-graph');
+      const exportText = document.getElementById('content-text-export');
+      const exportGraph = document.getElementById('content-graph-export');
+      if (contentText && exportText) {
+        exportText.innerHTML = contentText.innerHTML;
+      }
+      if (contentGraph && exportGraph) {
+        exportGraph.innerHTML = contentGraph.innerHTML;
+        exportGraph.className = contentGraph.className;
+      }
+      // Inyectar todos los estilos globales y locales para la exportación
+      const exportContainer = document.getElementById('export-container');
+      let styles = '';
+      document.querySelectorAll('style, link[rel="stylesheet"]').forEach(style => {
+        if (style.tagName === 'STYLE') styles += style.innerHTML;
+      });
+      let style = document.createElement('style');
+      style.innerHTML = styles;
+      exportContainer.appendChild(style);
+      exportContainer.style.display = 'block';
+      // Descargar solo el contenedor de ecuación, gráfica y tabla
+      setTimeout(() => {
+        downloadElementAsImage('export-container', 'grafica_tabla.png');
+        // Limpiar estilos después de descargar
+        setTimeout(()=>{
+          exportContainer.style.display = 'none';
+          if (style.parentNode) style.parentNode.removeChild(style);
+        }, 500);
+      }, 100);
+    });
+  </script>
+  <script type="module" src="/src/js/download.js"></script>
   <style>
+    html.light-theme {
+      --accent: 136, 58, 234;
+      --accent-light: 49, 10, 101;
+      --accent-dark: 224, 204, 250;
+      background: #f7f7f7;
+      color: #181818;
+    }
+    html.light-theme main {
+      color: #181818;
+    }
+    html.light-theme .instructions {
+      border: 1px solid #bdbdbd;
+      background: linear-gradient(rgba(255,255,255,0.95), rgba(245,245,245,0.85));
+      color: #181818;
+    }
+    html.light-theme .instructions code {
+      background: #ececec;
+      color: #007bff;
+    }
+    html.light-theme .instructions strong {
+      color: #007bff;
+    }
+    html.light-theme .link-card > a {
+      color: #181818;
+      background-color: #fff;
+      opacity: 1;
+    }
+    html.light-theme .button-tutorial {
+      color: #fff;
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    html.light-theme .button-tutorial:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+    html.light-theme .button-tutorial:active {
+      background-color: #003d7f;
+      border-color: #003d7f;
+    }
+    html.dark-theme {
+      background: #13151a;
+      color: #fff;
+    }
     a img {
       width: 100%;
       height: auto;

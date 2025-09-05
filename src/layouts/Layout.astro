@@ -17,26 +17,75 @@ const { title } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<slot />
+			<div style="display: flex; justify-content: flex-end; gap: 1rem; margin-bottom: 1rem;">
+				<button id="theme-toggle-btn" style="padding: 0.5rem 1rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold;">🌗 Cambiar tema</button>
+			</div>
+			<slot />
+			<script type="module" src="/src/js/theme.js"></script>
 	</body>
 </html>
 <style is:global>
-	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background: #13151a;
-		background-size: 224px;
-	}
+   :root {
+	   --accent: 136, 58, 234;
+	   --accent-light: 224, 204, 250;
+	   --accent-dark: 49, 10, 101;
+	   --accent-gradient: linear-gradient(
+		   45deg,
+		   rgb(var(--accent)),
+		   rgb(var(--accent-light)) 30%,
+		   white 60%
+	   );
+   }
+   html {
+	   font-family: system-ui, sans-serif;
+	   background: #13151a;
+	   background-size: 224px;
+	   color: #fff;
+	   transition: background 0.3s, color 0.3s;
+   }
+   html.light-theme {
+	   background: #f7f7f7;
+	   color: #181818;
+   }
+   html.light-theme th, html.light-theme td {
+	   color: #181818 !important;
+   }
+   html.light-theme main,
+   html.light-theme .instructions,
+   html.light-theme .link-card > a,
+   html.light-theme th,
+   html.light-theme td {
+	   color: #181818 !important;
+   }
+   html.light-theme .instructions {
+	   border: 1px solid #bdbdbd;
+	   background: linear-gradient(rgba(255,255,255,0.95), rgba(245,245,245,0.85));
+   }
+   html.light-theme .instructions code {
+	   background: #ececec;
+	   color: #007bff;
+   }
+   html.light-theme .instructions strong {
+	   color: #007bff;
+   }
+   html.light-theme .link-card > a {
+	   color: #fff !important;
+	   background-color: #007bff;
+	   opacity: 1;
+   }
+   html.light-theme .button-tutorial {
+	   color: #fff;
+	   background-color: #007bff;
+	   border-color: #007bff;
+   }
+   html.light-theme .button-tutorial:hover {
+	   background-color: #0056b3;
+	   border-color: #0056b3;
+   }
+   html.light-theme .button-tutorial:active {
+	   background-color: #003d7f;
+	   border-color: #003d7f;
+   }
 	code {
 		font-family:
 			Menlo,
@@ -48,6 +97,4 @@ const { title } = Astro.props;
 			Courier New,
 			monospace;
 	}
-
-	
 </style>

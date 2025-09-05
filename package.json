@@ -12,7 +12,9 @@
   "dependencies": {
     "@astrojs/check": "^0.5.9",
     "astro": "^4.5.8",
+    "canvg": "^4.0.3",
     "d3": "^7.9.0",
+    "html2canvas": "^1.4.1",
     "regression": "^2.0.1",
     "sweetalert2": "^11.10.7",
     "typescript": "^5.4.3"

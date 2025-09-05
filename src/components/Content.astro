@@ -27,6 +27,28 @@
 </div>
 
 <style is:global>
+  html.light-theme input[type="number"],
+  html.light-theme input[type="text"],
+  html.light-theme th input,
+  html.light-theme td input {
+    color: #181818 !important;
+    background: #fff !important;
+    border-color: #bbb;
+  }
+  html.light-theme th, html.light-theme td {
+    color: #181818 !important;
+  }
+  html.dark-theme input[type="number"],
+  html.dark-theme input[type="text"],
+  html.dark-theme th input,
+  html.dark-theme td input {
+    color: #fff !important;
+    background: #23262d !important;
+    border-color: #555;
+  }
+  html.dark-theme th, html.dark-theme td {
+    color: #fff !important;
+  }
   .container {
     max-width: 800px;
     margin: 20px auto;

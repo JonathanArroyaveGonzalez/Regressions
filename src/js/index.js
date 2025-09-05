@@ -1,13 +1,15 @@
 import * as d3 from "d3";
-import * as Swal from "sweetalert2";
+import Swal from "sweetalert2";
 
 document.getElementById("agregarFila").addEventListener("click", function () {
   let tabla = document.getElementById("tabla").getElementsByTagName("tbody")[0];
   let nuevaFila = tabla.insertRow(tabla.rows.length);
   let celda1 = nuevaFila.insertCell(0);
   let celda2 = nuevaFila.insertCell(1);
-  celda1.innerHTML = '<td><input type="number" class="input-x"></td>';
-  celda2.innerHTML = '<td><input type="number" class="input-y"></td>';
+  const isLight = document.documentElement.classList.contains('light-theme');
+  const inputStyle = isLight ? 'color:#181818;' : 'color:#fff;';
+  celda1.innerHTML = `<td><input type="number" class=" input-x" style="${inputStyle}"></td>`;
+  celda2.innerHTML = `<td><input type="number" class="input-y" style="${inputStyle}"></td>`;
 });
 
 document.getElementById("eliminarFila").addEventListener("click", function () {
@@ -31,6 +33,8 @@ document.getElementById("graficar").addEventListener("click", function () {
   });
 
   if (data.length > 0) {
+    // Detectar tema actual
+    const isLight = document.documentElement.classList.contains('light-theme');
     Swal.fire({
       title: "Seleccione el tipo de regresión que desea realizar.",
       showDenyButton: true,
@@ -41,8 +45,8 @@ document.getElementById("graficar").addEventListener("click", function () {
       confirmButtonText: "Lineal📈",
       denyButtonText: `Cuadratica📈`,
       cancelButtonText: `Cancelar❌`,
-      color: "white",
-      background: "#13151a",
+      color: isLight ? "#222" : "#fff",
+      background: isLight ? "#f7f7f7" : "#13151a",
       imageUrl: "https://i.gifer.com/YaDc.gif",
       imageWidth: 400,
       imageHeight: 200,
@@ -97,13 +101,26 @@ function drawGraph(data) {
   const xAxis = d3.axisBottom().scale(xScale);
   const yAxis = d3.axisLeft().scale(yScale);
 
+  // Detectar tema actual para color de texto
+  const isLight = document.documentElement.classList.contains('light-theme');
+  const axisColor = isLight ? '#181818' : '#fff';
+
   // Añadir ejes X e Y a la gráfica
   svg
     .append("g")
     .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
+    .call(xAxis)
+    .selectAll("text")
+    .style("fill", axisColor);
 
-  svg.append("g").call(yAxis);
+  svg.append("g")
+    .call(yAxis)
+    .selectAll("text")
+    .style("fill", axisColor);
+
+  // Cambiar color de las líneas y ticks de los ejes
+  svg.selectAll('.domain').attr('stroke', axisColor);
+  svg.selectAll('.tick line').attr('stroke', axisColor);
 
   // Agregar etiquetas a los ejes
   svg
@@ -114,7 +131,7 @@ function drawGraph(data) {
     )
     .style("text-anchor", "middle")
     .text(inputX)
-    .style("fill", "white")
+    .style("fill", axisColor)
     .style("font-size", "25px");
 
   svg
@@ -125,7 +142,7 @@ function drawGraph(data) {
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .text(inputY)
-    .style("fill", "white")
+    .style("fill", axisColor)
     .style("font-size", "25px");
 
   // Dibujar puntos de dispersión
@@ -159,21 +176,27 @@ function drawGraph(data) {
   }, 0);
   const coefficientOfDetermination = 1 - SSResidual / SSTotal;
 
-  // Dibujar línea de tendencia
+  // Dibujar línea de tendencia proyectada desde x=0 hasta x máximo
+  const minX = 0;
+  const maxX = d3.max(data, (d) => d.x);
+  const trendLinePoints = [
+    { x: minX, y: slope * minX + intercept },
+    { x: maxX, y: slope * maxX + intercept }
+  ];
   const line = d3
     .line()
     .x((d) => xScale(d.x))
-    .y((d) => yScale(slope * d.x + intercept))
-    .curve(d3.curveLinear); // La linea debe ser suave.
+    .y((d) => yScale(d.y))
+    .curve(d3.curveLinear);
 
   svg
     .append("path")
-    .datum(data)
+    .datum(trendLinePoints)
     .attr("fill", "none")
     .attr("stroke", "red")
     .attr("stroke-width", 2)
     .attr("d", line)
-    .attr("opacity", 0.8); // ajusta la opacidad
+    .attr("opacity", 0.8);
 
   // Mostrar ecuación de la línea y coeficiente R^2
   let equationText = `${inputY} =  ${slope.toFixed(
@@ -233,12 +256,25 @@ function drawGraph2(data) {
   const xAxis = d3.axisBottom().scale(xScale);
   const yAxis = d3.axisLeft().scale(yScale);
 
+  // Detectar tema actual para color de texto
+  const isLight = document.documentElement.classList.contains('light-theme');
+  const axisColor = isLight ? '#181818' : '#fff';
+
   svg
     .append("g")
     .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
+    .call(xAxis)
+    .selectAll("text")
+    .style("fill", axisColor);
 
-  svg.append("g").call(yAxis);
+  svg.append("g")
+    .call(yAxis)
+    .selectAll("text")
+    .style("fill", axisColor);
+
+  // Cambiar color de las líneas y ticks de los ejes
+  svg.selectAll('.domain').attr('stroke', axisColor);
+  svg.selectAll('.tick line').attr('stroke', axisColor);
 
   svg
     .append("text")
@@ -248,7 +284,7 @@ function drawGraph2(data) {
     )
     .style("text-anchor", "middle")
     .text(inputX)
-    .style("fill", "white")
+    .style("fill", axisColor)
     .style("font-size", "25px");
 
   svg
@@ -259,7 +295,7 @@ function drawGraph2(data) {
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .text(inputY)
-    .style("fill", "white")
+    .style("fill", axisColor)
     .style("font-size", "25px");
 
   svg
@@ -300,45 +336,44 @@ function drawGraph2(data) {
   const c = determinantC / determinant;
   const a = sumY / n - b * (sumX / n) - c * (sumXX / n);
 
-  // Define the quadratic function
-  const quadraticFunction = (x) => c + b * x + a * x * x;
+  // La función cuadrática correcta es: a + b*x + c*x^2
+  const quadraticFunction = (x) => a + b * x + c * x * x;
+  const minX = d3.min(data, (d) => d.x);
+  const maxX = d3.max(data, (d) => d.x);
+  const curvePoints = [];
+  const steps = 200;
+  for (let i = 0; i <= steps; i++) {
+    const x = minX + (i * (maxX - minX)) / steps;
+    curvePoints.push({ x, y: quadraticFunction(x) });
+  }
   //Calcular R^2
   const coefficientOfDetermination =
     (b * (sumXY - (sumX * sumY) / n) + c * (sumXXY - (sumXX * sumY) / n)) /
     (sumYY - (sumY * sumY) / n);
 
-  // Dibujar la curva de la parábola
+  // Dibujar la curva de la parábola suavizada
   const line = d3
     .line()
     .x((d) => xScale(d.x))
-    .y((d) => yScale(quadraticFunction(d.x)))
+    .y((d) => yScale(d.y))
     .curve(d3.curveBasis);
 
   svg
     .append("path")
-    .datum(data)
+    .datum(curvePoints)
     .attr("fill", "none")
     .attr("stroke", "red")
     .attr("stroke-width", 2)
     .attr("d", line)
     .attr("opacity", 0.8);
 
-  let equationText = `${inputY} = ${c.toFixed(2)} ${inputX}² + ${b.toFixed(
-    2
-  )} ${inputX} + ${a.toFixed(2)}`;
-
-  if (b < 0) {
-    equationText = `${inputY} = ${c.toFixed(2)} ${inputX}²  ${b.toFixed(
-      2
-    )} ${inputX} + ${a.toFixed(2)}`;
+  let equationText = `${inputY} = ${a.toFixed(2)} + ${b.toFixed(2)} ${inputX} + ${c.toFixed(2)} ${inputX}²`;
+  if (b < 0 && c < 0) {
+    equationText = `${inputY} = ${a.toFixed(2)}  ${b.toFixed(2)} ${inputX}  ${c.toFixed(2)} ${inputX}²`;
+  } else if (b < 0) {
+    equationText = `${inputY} = ${a.toFixed(2)}  ${b.toFixed(2)} ${inputX} + ${c.toFixed(2)} ${inputX}²`;
   } else if (c < 0) {
-    equationText = `${inputY} = ${c.toFixed(2)} ${inputX}² + ${b.toFixed(
-      2
-    )} ${inputX}  ${a.toFixed(2)}`;
-  } else if (b < 0 && c < 0) {
-    equationText = `${inputY} = ${c.toFixed(2)} ${inputX}²  ${b.toFixed(
-      2
-    )} ${inputX}  ${a.toFixed(2)}`;
+    equationText = `${inputY} = ${a.toFixed(2)} + ${b.toFixed(2)} ${inputX}  ${c.toFixed(2)} ${inputX}²`;
   }
 
   let rSquaredText = ` ✅ R² = ${coefficientOfDetermination.toFixed(5)} ✅`;
@@ -366,13 +401,20 @@ function insertDataTable(
 ) {
   let dataTable = document.getElementById("data-table");
   let contentText = document.getElementById("content-text");
-  contentText.innerHTML = `🔺 ${titleG} 🔻<br>↪︎ ${equationText} ↩︎<br>  ${rSquaredText} `;
+  let contentTextExport = document.getElementById("content-text-export");
+  const html = `🔺 ${titleG} 🔻<br>↪︎ ${equationText} ↩︎<br>  ${rSquaredText} `;
+  contentText.innerHTML = html;
+  if (contentTextExport) contentTextExport.innerHTML = html;
 
+  // Detectar tema actual para el color de texto
+  const isLight = document.documentElement.classList.contains('light-theme');
+  const thStyle = isLight ? ' style="color:#181818;"' : '';
+  const tdStyle = isLight ? ' style="color:#181818;"' : '';
   // Crear la estructura de la tabla
-  let tableHTML = `<table><thead><tr><th>${inputX}➡️</th><th>${inputY}⬆️</th></tr></thead><tbody>`;
+  let tableHTML = `<table><thead><tr><th${thStyle}>${inputX}➡️</th><th${thStyle}>${inputY}⬆️</th></tr></thead><tbody>`;
   // Iterar sobre los datos y agregar filas a la tabla
   data.forEach((item) => {
-    tableHTML += `<tr><td>${item.x}</td><td>${item.y}</td></tr>`;
+    tableHTML += `<tr><td${tdStyle}>${item.x}</td><td${tdStyle}>${item.y}</td></tr>`;
   });
 
   tableHTML += "</tbody></table>";
