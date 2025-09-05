@@ -1,6 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
+import { getBaseUrl } from "../js/base-url.js";
+
+const baseUrl = getBaseUrl();
 ---
 
 <Layout title="Acerca de">
@@ -34,7 +37,7 @@ import Card from "../components/Card.astro";
           </linearGradient>
         </defs>
       </svg>
-      <a href="/Regressions/" class="titulo"
+      <a href={baseUrl} class="titulo"
         ><h1 class="inicio">
           Acerca <span class="text-gradient">De ...</span>
         </h1></a
@@ -115,7 +118,7 @@ import Card from "../components/Card.astro";
       tutorial.
     </p>
     <div class="button-container">
-      <a href="/Regressions/tutorial/" class="button-tutorial"
+      <a href={`${baseUrl}tutorial/`} class="button-tutorial"
         >Ver tutorial 🚀</a
       >
     </div>
