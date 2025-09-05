@@ -1,9 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
-import { getBaseUrl } from "../js/base-url.js";
-
-const baseUrl = getBaseUrl();
 ---
 
 <Layout title="Acerca de">
@@ -37,7 +34,7 @@ const baseUrl = getBaseUrl();
           </linearGradient>
         </defs>
       </svg>
-      <a href={baseUrl} class="titulo"
+      <a href="../" class="titulo"
         ><h1 class="inicio">
           Acerca <span class="text-gradient">De ...</span>
         </h1></a
@@ -118,14 +115,14 @@ const baseUrl = getBaseUrl();
       tutorial.
     </p>
     <div class="button-container">
-      <a href={`${baseUrl}tutorial/`} class="button-tutorial"
+      <a href="./tutorial/" class="button-tutorial"
         >Ver tutorial 🚀</a
       >
     </div>
     <br /><br />
     <ul role="list" class="link-card-grid">
       <Card
-        href=""
+        href="../"
         title="Inicio ⬆️"
         body="Regresar a la pagina de inicio."
       />
