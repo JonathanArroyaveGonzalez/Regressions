@@ -1,0 +1,57 @@
+/* Estilos mejorados para los ejes de la gráfica */
+
+/* Texto de los ejes - números */
+.tick text {
+  font-size: 18px !important;
+  font-weight: bold !important;
+  font-family: 'Arial', sans-serif !important;
+}
+
+/* Tema claro */
+html.light-theme .tick text {
+  fill: #181818 !important;
+}
+
+/* Tema oscuro */
+html:not(.light-theme) .tick text {
+  fill: #ffffff !important;
+}
+
+/* Líneas de los ejes */
+html.light-theme .domain,
+html.light-theme .tick line {
+  stroke: #181818 !important;
+}
+
+html:not(.light-theme) .domain,
+html:not(.light-theme) .tick line {
+  stroke: #ffffff !important;
+}
+
+/* Etiquetas de los ejes (X, Y) */
+svg text {
+  font-size: 25px !important;
+  font-weight: bold !important;
+}
+
+html.light-theme svg text {
+  fill: #181818 !important;
+}
+
+html:not(.light-theme) svg text {
+  fill: #ffffff !important;
+}
+
+/* Asegurar visibilidad en ambos temas */
+.axis-label {
+  font-size: 25px !important;
+  font-weight: bold !important;
+}
+
+html.light-theme .axis-label {
+  fill: #181818 !important;
+}
+
+html:not(.light-theme) .axis-label {
+  fill: #ffffff !important;
+}

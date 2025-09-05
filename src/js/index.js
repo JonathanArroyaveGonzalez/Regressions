@@ -103,20 +103,28 @@ function drawGraph(data) {
 
   // Detectar tema actual para color de texto
   const isLight = document.documentElement.classList.contains('light-theme');
-  const axisColor = isLight ? '#181818' : '#fff';
+  const axisColor = isLight ? '#181818' : '#ffffff';
 
-  // Añadir ejes X e Y a la gráfica
-  svg
+  // Añadir ejes X e Y a la gráfica con estilos mejorados
+  const xAxisGroup = svg
     .append("g")
     .attr("transform", "translate(0," + height + ")")
-    .call(xAxis)
-    .selectAll("text")
-    .style("fill", axisColor);
+    .call(xAxis);
+    
+  // Aplicar estilos al eje X
+  xAxisGroup.selectAll("text")
+    .style("fill", axisColor)
+    .style("font-size", "24px")
+    .style("font-weight", "bold");
 
-  svg.append("g")
-    .call(yAxis)
-    .selectAll("text")
-    .style("fill", axisColor);
+  const yAxisGroup = svg.append("g")
+    .call(yAxis);
+    
+  // Aplicar estilos al eje Y
+  yAxisGroup.selectAll("text")
+    .style("fill", axisColor)
+    .style("font-size", "24px")
+    .style("font-weight", "bold");
 
   // Cambiar color de las líneas y ticks de los ejes
   svg.selectAll('.domain').attr('stroke', axisColor);
@@ -258,19 +266,28 @@ function drawGraph2(data) {
 
   // Detectar tema actual para color de texto
   const isLight = document.documentElement.classList.contains('light-theme');
-  const axisColor = isLight ? '#181818' : '#fff';
+  const axisColor = isLight ? '#181818' : '#ffffff';
 
-  svg
+  // Añadir ejes X e Y a la gráfica con estilos mejorados
+  const xAxisGroup = svg
     .append("g")
     .attr("transform", "translate(0," + height + ")")
-    .call(xAxis)
-    .selectAll("text")
-    .style("fill", axisColor);
+    .call(xAxis);
+    
+  // Aplicar estilos al eje X
+  xAxisGroup.selectAll("text")
+    .style("fill", axisColor)
+    .style("font-size", "24px")
+    .style("font-weight", "bold");
 
-  svg.append("g")
-    .call(yAxis)
-    .selectAll("text")
-    .style("fill", axisColor);
+  const yAxisGroup = svg.append("g")
+    .call(yAxis);
+    
+  // Aplicar estilos al eje Y
+  yAxisGroup.selectAll("text")
+    .style("fill", axisColor)
+    .style("font-size", "24px")
+    .style("font-weight", "bold");
 
   // Cambiar color de las líneas y ticks de los ejes
   svg.selectAll('.domain').attr('stroke', axisColor);
@@ -421,3 +438,37 @@ function insertDataTable(
 
   dataTable.innerHTML = tableHTML;
 }
+
+// Función para actualizar colores de los ejes cuando cambie el tema
+function updateAxisColors() {
+  const isLight = document.documentElement.classList.contains('light-theme');
+  const axisColor = isLight ? '#181818' : '#ffffff';
+  
+  // Actualizar todos los textos de los ejes
+  d3.selectAll('.tick text')
+    .style('fill', axisColor);
+  
+  // Actualizar las líneas de los ejes
+  d3.selectAll('.domain, .tick line')
+    .attr('stroke', axisColor);
+    
+  // Actualizar etiquetas de los ejes
+  d3.selectAll('svg text')
+    .style('fill', axisColor);
+}
+
+// Observar cambios en el tema
+const observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+      // El tema ha cambiado, actualizar colores
+      updateAxisColors();
+    }
+  });
+});
+
+// Configurar el observador para vigilar cambios en la clase del documento
+observer.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ['class']
+});

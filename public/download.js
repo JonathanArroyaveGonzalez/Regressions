@@ -247,17 +247,26 @@ async function addInlineStyles(svg) {
     
     // Aplicar estilos según el tipo de elemento
     if (tagName === 'text') {
-      // Todo el texto en negro
+      // TODO EL TEXTO EN NEGRO SIEMPRE para descarga (independiente del tema)
       element.setAttribute('fill', '#000000');
       element.setAttribute('stroke', 'none');
       
-      // Aplicar estilos computados
-      const computedStyle = window.getComputedStyle(element);
-      const fontSize = computedStyle.fontSize;
-      const fontFamily = computedStyle.fontFamily;
+      // Aumentar tamaño de fuente para números de ejes en descarga
+      const textContent = element.textContent || '';
+      const isNumber = !isNaN(parseFloat(textContent)) && isFinite(textContent);
       
-      if (fontSize && fontSize !== 'auto') element.setAttribute('font-size', fontSize);
-      if (fontFamily && fontFamily !== 'auto') element.setAttribute('font-family', fontFamily);
+      if (isNumber) {
+        // Es un número de eje, aplicar tamaño grande
+        element.setAttribute('font-size', '20px');
+        element.setAttribute('font-weight', 'bold');
+      } else {
+        // Es una etiqueta de eje, aplicar tamaño normal
+        element.setAttribute('font-size', '25px');
+        element.setAttribute('font-weight', 'bold');
+      }
+      
+      // Aplicar familia de fuente
+      element.setAttribute('font-family', 'Arial, sans-serif');
     } 
     else if (tagName === 'circle') {
       // Mantener el color de los puntos
@@ -309,16 +318,42 @@ async function addInlineStyles(svg) {
     }
   });
   
-  // Asegurar que todos los elementos de texto de los ejes sean negros
+  // Asegurar que todos los elementos de texto de los ejes sean negros con tamaño aumentado
   clone.querySelectorAll('.tick text, .axis text').forEach(text => {
     text.setAttribute('fill', '#000000');
     text.setAttribute('stroke', 'none');
+    text.setAttribute('font-size', '20px'); // Tamaño fijo para números de ejes
+    text.setAttribute('font-weight', 'bold');
+    text.setAttribute('font-family', 'Arial, sans-serif');
   });
   
   // Asegurar que todas las líneas de los ejes sean negras
   clone.querySelectorAll('.tick line, .axis line, .domain').forEach(line => {
     line.setAttribute('stroke', '#000000');
     line.setAttribute('fill', 'none');
+    line.setAttribute('stroke-width', '1');
+  });
+  
+  // Forzar estilos en TODOS los elementos de texto sin excepción
+  clone.querySelectorAll('text').forEach(text => {
+    text.setAttribute('fill', '#000000');
+    text.setAttribute('stroke', 'none');
+    
+    // Determinar si es un número de eje o una etiqueta
+    const textContent = text.textContent || '';
+    const isNumber = !isNaN(parseFloat(textContent)) && isFinite(textContent);
+    
+    if (isNumber) {
+      // Números de los ejes
+      text.setAttribute('font-size', '20px');
+      text.setAttribute('font-weight', 'bold');
+    } else {
+      // Etiquetas de los ejes (X, Y)
+      text.setAttribute('font-size', '25px');
+      text.setAttribute('font-weight', 'bold');
+    }
+    
+    text.setAttribute('font-family', 'Arial, sans-serif');
   });
   
   return new XMLSerializer().serializeToString(clone);

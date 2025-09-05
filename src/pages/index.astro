@@ -5,9 +5,12 @@ import Content from "../components/Content.astro";
 ---
 
 <Layout title="Physical Regressions">
-  <!-- Contador de visitas discreto -->
-  <span id="visitor-counter" style="position: fixed; bottom: 10px; right: 16px; font-size: 0.9em; color: #888; background: rgba(255,255,255,0.7); border-radius: 8px; padding: 2px 10px; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">-</span>
-  <script type="module" src="/visitor-counter.js"></script>
+  <!-- Contador de visitas usando uCounter.com -->
+  <div style="position: fixed; bottom: 10px; right: 16px; font-size: 0.9em; color: #888; background: rgba(255,255,255,0.7); border-radius: 8px; padding: 2px 10px; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">
+    <!-- uCounter.com Code Start  -->
+    <div style="text-align: center;"><script type="text/javascript" src="https://yo.ucounter.com/25/lzqd/09/s/11/"></script><script type="text/javascript" src="https://ucounter.com/stat.js"></script></div>
+    <!-- uCounter.com Code End -->
+  </div>
   <main>
     <!-- Contenedor oculto solo para exportar la imagen -->
     <div id="export-container" style="background: transparent; display:none; position: absolute; left: -9999px; top: 0;">
