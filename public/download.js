@@ -21,6 +21,25 @@ async function loadScript(src) {
   });
 }
 
+// Función para cargar módulos ESM
+async function loadESMScript(src) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Importar el módulo ESM
+      const module = await import(src);
+      
+      // Hacer disponible Canvg globalmente
+      window.canvg = module;
+      
+      console.log(`Módulo ESM cargado exitosamente: ${src}`);
+      resolve();
+    } catch (error) {
+      console.error(`Error al cargar módulo ESM: ${src}`, error);
+      reject(new Error(`No se pudo cargar ${src}`));
+    }
+  });
+}
+
 export async function downloadElementAsImage(elementId, filename = 'descarga.png') {
   const element = document.getElementById(elementId);
   if (!element) {
@@ -37,7 +56,8 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
     
     console.log('Cargando Canvg...');
-    await loadScript('https://unpkg.com/canvg/lib/umd.js');
+    // Usar la versión ESM de Canvg desde jsDelivr
+    await loadESMScript('https://cdn.jsdelivr.net/npm/canvg@4.0.3/+esm');
     
     // Esperar a que html2canvas esté disponible
     let attempts = 0;
@@ -62,7 +82,6 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
     }
     
     console.log('Librerías cargadas exitosamente');
-    const { Canvg } = window.canvg;
     
     // Crear un contenedor temporal para la composición
     const tempContainer = document.createElement('div');
@@ -74,9 +93,11 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
     tempContainer.style.width = 'max-content';
     tempContainer.style.color = '#000000'; // Texto negro por defecto
     
-    // 1. Convertir SVG a Canvas con estilos
+    // 1. Convertir SVG a Canvas con Canvg
     const svg = element.querySelector('svg');
     if (svg) {
+      console.log('Procesando SVG con Canvg...');
+      
       // Obtener estilos computados del SVG y sus elementos
       const svgWithStyles = await addInlineStyles(svg);
       
@@ -101,8 +122,8 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, width, height);
       
-      // Renderizar SVG con estilos en canvas
-      const v = await Canvg.from(ctx, svgWithStyles);
+      // Renderizar SVG con Canvg
+      const v = window.canvg.Canvg.fromString(ctx, svgWithStyles);
       await v.render();
       
       // Agregar el canvas al contenedor temporal
@@ -210,6 +231,14 @@ async function addInlineStyles(svg) {
   // Establecer fondo blanco para el SVG
   clone.style.backgroundColor = '#ffffff';
   
+  // Asegurar que el SVG tenga dimensiones definidas
+  const viewBox = clone.getAttribute('viewBox');
+  if (viewBox) {
+    const [x, y, width, height] = viewBox.split(' ').map(Number);
+    if (!clone.getAttribute('width')) clone.setAttribute('width', width);
+    if (!clone.getAttribute('height')) clone.setAttribute('height', height);
+  }
+  
   // Obtener todos los elementos del SVG
   const elements = clone.querySelectorAll('*');
   
@@ -219,85 +248,77 @@ async function addInlineStyles(svg) {
     // Aplicar estilos según el tipo de elemento
     if (tagName === 'text') {
       // Todo el texto en negro
-      element.style.fill = '#000000';
-      element.style.stroke = 'none';
-      const fontSize = window.getComputedStyle(element).fontSize;
-      if (fontSize) element.style.fontSize = fontSize;
-      const fontFamily = window.getComputedStyle(element).fontFamily;
-      if (fontFamily) element.style.fontFamily = fontFamily;
+      element.setAttribute('fill', '#000000');
+      element.setAttribute('stroke', 'none');
+      
+      // Aplicar estilos computados
+      const computedStyle = window.getComputedStyle(element);
+      const fontSize = computedStyle.fontSize;
+      const fontFamily = computedStyle.fontFamily;
+      
+      if (fontSize && fontSize !== 'auto') element.setAttribute('font-size', fontSize);
+      if (fontFamily && fontFamily !== 'auto') element.setAttribute('font-family', fontFamily);
     } 
     else if (tagName === 'circle') {
       // Mantener el color de los puntos
-      element.style.fill = 'steelblue';
-      element.style.opacity = '0.7';
+      element.setAttribute('fill', 'steelblue');
+      element.setAttribute('opacity', '0.7');
     } 
     else if (tagName === 'path') {
       // Verificar si es la línea de regresión (roja) o los ejes
-      const stroke = element.getAttribute('stroke');
+      const currentStroke = element.getAttribute('stroke') || element.style.stroke;
       const d = element.getAttribute('d');
       
-      if (stroke === 'red' || element.style.stroke === 'red') {
+      if (currentStroke === 'red' || currentStroke?.includes('red')) {
         // Línea de regresión
-        element.style.stroke = 'red';
-        element.style.strokeWidth = '2';
-        element.style.fill = 'none';
-        element.style.opacity = '0.8';
+        element.setAttribute('stroke', 'red');
+        element.setAttribute('stroke-width', '2');
+        element.setAttribute('fill', 'none');
+        element.setAttribute('opacity', '0.8');
       } else if (d && (d.includes('M0') || d.includes('L0'))) {
         // Probablemente son los ejes
-        element.style.stroke = '#000000';
-        element.style.strokeWidth = '1';
-        element.style.fill = 'none';
+        element.setAttribute('stroke', '#000000');
+        element.setAttribute('stroke-width', '1');
+        element.setAttribute('fill', 'none');
       } else {
         // Otros paths (como los ticks de los ejes)
-        element.style.stroke = '#000000';
-        element.style.fill = 'none';
+        element.setAttribute('stroke', '#000000');
+        element.setAttribute('fill', 'none');
       }
     }
     else if (tagName === 'line') {
       // Líneas de los ejes y ticks en negro
-      element.style.stroke = '#000000';
-      element.style.strokeWidth = '1';
+      element.setAttribute('stroke', '#000000');
+      element.setAttribute('stroke-width', '1');
     }
     else if (tagName === 'g') {
       // Grupos que contienen los ejes
-      if (element.classList.contains('tick') || 
-          element.classList.contains('axis') ||
-          element.getAttribute('class')?.includes('axis')) {
+      const className = element.getAttribute('class') || '';
+      if (className.includes('tick') || 
+          className.includes('axis') ||
+          element.classList.contains('tick') ||
+          element.classList.contains('axis')) {
         // Asegurar que todos los elementos de los ejes sean negros
         element.querySelectorAll('line, path').forEach(child => {
-          child.style.stroke = '#000000';
+          child.setAttribute('stroke', '#000000');
         });
         element.querySelectorAll('text').forEach(child => {
-          child.style.fill = '#000000';
+          child.setAttribute('fill', '#000000');
         });
       }
     }
-    
-    // Propiedades generales importantes
-    const computedStyles = window.getComputedStyle(element);
-    const importantProps = [
-      'stroke-dasharray', 'stroke-linecap', 'stroke-linejoin',
-      'text-anchor', 'dominant-baseline'
-    ];
-    
-    importantProps.forEach(prop => {
-      const value = computedStyles.getPropertyValue(prop);
-      if (value && value !== 'none' && value !== 'auto') {
-        element.style[prop] = value;
-      }
-    });
   });
   
   // Asegurar que todos los elementos de texto de los ejes sean negros
   clone.querySelectorAll('.tick text, .axis text').forEach(text => {
-    text.style.fill = '#000000';
-    text.style.stroke = 'none';
+    text.setAttribute('fill', '#000000');
+    text.setAttribute('stroke', 'none');
   });
   
   // Asegurar que todas las líneas de los ejes sean negras
   clone.querySelectorAll('.tick line, .axis line, .domain').forEach(line => {
-    line.style.stroke = '#000000';
-    line.style.fill = 'none';
+    line.setAttribute('stroke', '#000000');
+    line.setAttribute('fill', 'none');
   });
   
   return new XMLSerializer().serializeToString(clone);
