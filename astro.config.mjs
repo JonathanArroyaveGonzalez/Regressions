@@ -1,11 +1,15 @@
 
 import { defineConfig } from 'astro/config';
 
-// Para deployment en Vercel, siempre usamos '/' como base
-// Para GitHub Pages, usamos '/Regressions/'
-const deploymentTarget = process.env.VERCEL_ENV || process.env.VERCEL ? 'vercel' : 'github';
+// Verifica si estamos en un entorno de Vercel mirando la URL
+const isVercel = process.env.VERCEL === '1' || 
+                 process.env.VERCEL_ENV || 
+                 process.env.VERCEL_URL || 
+                 process.env.NEXT_PUBLIC_VERCEL_URL;
+
+console.log('Entorno de despliegue:', isVercel ? 'Vercel' : 'GitHub Pages');
 
 export default defineConfig({
-  base: deploymentTarget === 'vercel' ? '/' : '/Regressions/',
+  base: isVercel ? '/' : '/Regressions/',
   // ...otras opciones...
 });
