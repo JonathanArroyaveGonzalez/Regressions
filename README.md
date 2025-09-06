@@ -9,15 +9,26 @@
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178c6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
   [![D3.js](https://img.shields.io/badge/D3.js-7.9+-f68e56?style=flat&logo=d3.js)](https://d3js.org/)
   [![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=flat&logo=vercel)](https://vercel.com/)
+  [![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-blue?style=flat&logo=jenkins)](https://jenkins.io/)
   
-  [🚀 Demo en Vivo](https://physical-regressions.vercel.app/) • [📖 Documentación](#-documentación) • [🛠️ Instalación](#-instalación)
+  ## 🌐 Aplicación en Producción
+  
+  > **Esta aplicación está desplegada y disponible en:** 
+  > ### **🚀 [https://physical-regressions.vercel.app/](https://physical-regressions.vercel.app/)**
+  
+  **🔧 CI/CD Pipeline:** Este proyecto utiliza **Jenkins** para integración y despliegue continuo, garantizando que todas las actualizaciones sean probadas y desplegadas automáticamente en **Vercel**.
+  
+  ---
+  
+  [📖 Documentación](#-documentación) • [🛠️ Instalación](#-instalación) • [🤝 Contribuir](#-contribuir)
 </div>
 
 ---
 
 ## 📋 Tabla de Contenidos
 
-- [🎯 Descripción](#-descripción)
+- [� Deployment y CI/CD](#-deployment-y-cicd)
+- [�🎯 Descripción](#-descripción)
 - [✨ Características](#-características)
 - [🧮 Herramientas Disponibles](#-herramientas-disponibles)
 - [🛠️ Instalación](#-instalación)
@@ -26,6 +37,40 @@
 - [📖 Documentación](#-documentación)
 - [🤝 Contribuir](#-contribuir)
 - [📄 Licencia](#-licencia)
+
+---
+
+## 🌐 Deployment y CI/CD
+
+### 🚀 **Aplicación en Producción**
+La aplicación está completamente desplegada y funcional en:
+**https://physical-regressions.vercel.app/**
+
+### 🔧 **Pipeline CI/CD con Jenkins**
+Este proyecto implementa un pipeline de integración y despliegue continuo usando **Jenkins** que:
+
+- ✅ **Build automático** en cada push al repositorio
+- ✅ **Testing** de funcionalidades críticas
+- ✅ **Despliegue automático** a Vercel en caso de éxito
+- ✅ **Notificaciones** de estado del deployment
+- ✅ **Rollback automático** en caso de fallos
+
+### 📊 **Estado del Deployment**
+- **Platform:** Vercel
+- **CI/CD:** Jenkins Pipeline
+- **Status:** ✅ Activo y funcional
+- **URL:** https://physical-regressions.vercel.app/
+- **Last Deploy:** Automático via Jenkins
+
+### 🛠️ **Configuración de Vercel**
+```json
+{
+  "framework": "astro",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install"
+}
+```
 
 ---
 
