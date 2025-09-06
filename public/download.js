@@ -83,15 +83,32 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
     
     console.log('Librerías cargadas exitosamente');
     
-    // Crear un contenedor temporal para la composición
+    // Crear un contenedor temporal para la composición con estilos absolutos
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'fixed';
     tempContainer.style.top = '-9999px';
     tempContainer.style.left = '-9999px';
-    tempContainer.style.background = '#ffffff'; // Siempre fondo blanco
+    tempContainer.style.background = '#ffffff !important'; // Siempre fondo blanco
+    tempContainer.style.color = '#000000 !important'; // Texto negro por defecto
     tempContainer.style.padding = '20px';
     tempContainer.style.width = 'max-content';
-    tempContainer.style.color = '#000000'; // Texto negro por defecto
+    tempContainer.style.fontFamily = 'Arial, sans-serif';
+    tempContainer.style.fontSize = '14px';
+    
+    // Aplicar estilos CSS reset básico para evitar herencia de temas
+    tempContainer.style.cssText += `
+      all: initial !important;
+      position: fixed !important;
+      top: -9999px !important;
+      left: -9999px !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+      padding: 20px !important;
+      width: max-content !important;
+      font-family: Arial, sans-serif !important;
+      font-size: 14px !important;
+      font-weight: normal !important;
+    `;
     
     // 1. Convertir SVG a Canvas con Canvg
     const svg = element.querySelector('svg');
@@ -134,58 +151,206 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
       tempContainer.appendChild(imgFromCanvas);
     }
     
-    // 2. Agregar el texto de contenido
+    // 2. Procesar y agregar el texto de contenido con clonación completa
     const contentText = document.getElementById('content-text');
     if (contentText) {
+      console.log('Procesando content-text...');
+      
+      // Crear div completamente nuevo en lugar de clonar
       const textDiv = document.createElement('div');
-      textDiv.innerHTML = contentText.innerHTML;
-      // Forzar estilos para texto negro
-      textDiv.style.color = '#000000';
-      textDiv.style.marginBottom = '20px';
-      textDiv.style.fontSize = '16px';
-      textDiv.style.textAlign = 'center';
-      textDiv.style.fontWeight = 'bold';
+      textDiv.style.cssText = `
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        margin-bottom: 20px !important;
+        padding: 15px !important;
+        text-align: center !important;
+        font-family: Arial, sans-serif !important;
+        font-size: 16px !important;
+        font-weight: normal !important;
+        border: 1px solid #ccc !important;
+      `;
+      
+      // Extraer el contenido HTML y procesarlo
+      const htmlContent = contentText.innerHTML;
+      textDiv.innerHTML = htmlContent;
+      
+      // Función para aplicar estilos recursivamente a TODOS los elementos
+      function forceBlackStyles(element) {
+        // Aplicar estilos al elemento actual
+        element.style.cssText += `
+          color: #000000 !important;
+          background-color: transparent !important;
+          font-family: Arial, sans-serif !important;
+        `;
+        
+        // Si es H3
+        if (element.tagName === 'H3') {
+          element.style.cssText += `
+            color: #000000 !important;
+            font-size: 22px !important;
+            font-weight: bold !important;
+            margin: 10px 0 15px 0 !important;
+            text-align: center !important;
+            background-color: transparent !important;
+          `;
+        }
+        
+        // Si es párrafo
+        if (element.tagName === 'P') {
+          element.style.cssText += `
+            color: #000000 !important;
+            font-size: 14px !important;
+            margin: 8px 0 !important;
+            background-color: transparent !important;
+          `;
+        }
+        
+        // Si es div
+        if (element.tagName === 'DIV') {
+          element.style.cssText += `
+            color: #000000 !important;
+            background-color: transparent !important;
+          `;
+        }
+        
+        // Aplicar recursivamente a todos los hijos
+        Array.from(element.children).forEach(child => {
+          forceBlackStyles(child);
+        });
+      }
+      
+      // Aplicar estilos a todos los elementos
+      forceBlackStyles(textDiv);
+      
+      // También aplicar directamente a elementos específicos
+      textDiv.querySelectorAll('*').forEach(el => {
+        el.style.color = '#000000 !important';
+        el.style.fontFamily = 'Arial, sans-serif !important';
+        el.style.backgroundColor = 'transparent !important';
+      });
+      
       tempContainer.appendChild(textDiv);
     }
     
-    // 3. Agregar la tabla de datos
+    // 3. Procesar y agregar la tabla de datos con clonación completa
     const dataTable = document.getElementById('data-table');
     if (dataTable) {
-      const tableDiv = document.createElement('div');
-      tableDiv.innerHTML = dataTable.innerHTML;
+      console.log('Procesando data-table...');
       
-      // Aplicar estilos a la tabla
-      const table = tableDiv.querySelector('table');
-      if (table) {
-        table.style.borderCollapse = 'collapse';
-        table.style.width = '100%';
-        table.style.margin = '0 auto';
-        table.style.backgroundColor = '#ffffff';
+      // Crear div completamente nuevo
+      const tableDiv = document.createElement('div');
+      tableDiv.style.cssText = `
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        margin-top: 20px !important;
+        padding: 15px !important;
+        font-family: Arial, sans-serif !important;
+        border: 1px solid #ccc !important;
+      `;
+      
+      // Extraer y procesar el contenido
+      const htmlContent = dataTable.innerHTML;
+      tableDiv.innerHTML = htmlContent;
+      
+      // Función para aplicar estilos recursivamente
+      function forceTableStyles(element) {
+        element.style.cssText += `
+          color: #000000 !important;
+          font-family: Arial, sans-serif !important;
+          background-color: transparent !important;
+        `;
         
-        // Estilos para las celdas
-        const cells = table.querySelectorAll('th, td');
-        cells.forEach(cell => {
-          cell.style.border = '1px solid #333333';
-          cell.style.padding = '8px';
-          cell.style.textAlign = 'center';
-          cell.style.color = '#000000'; // Texto negro
-        });
+        // Si es H4 (título de la tabla)
+        if (element.tagName === 'H4') {
+          element.style.cssText = `
+            color: #000000 !important;
+            font-size: 20px !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            margin: 0 0 15px 0 !important;
+            background-color: transparent !important;
+            font-family: Arial, sans-serif !important;
+          `;
+        }
         
-        // Estilos para el encabezado
-        const headers = table.querySelectorAll('th');
-        headers.forEach(header => {
-          header.style.backgroundColor = '#4CAF50';
-          header.style.color = 'white';
-          header.style.fontWeight = 'bold';
-        });
+        // Si es tabla
+        if (element.tagName === 'TABLE') {
+          element.style.cssText = `
+            border-collapse: collapse !important;
+            width: 100% !important;
+            margin: 0 auto !important;
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            font-family: Arial, sans-serif !important;
+          `;
+        }
         
-        // Estilos para las celdas de datos
-        const dataCells = table.querySelectorAll('td');
-        dataCells.forEach(cell => {
-          cell.style.backgroundColor = '#ffffff';
-          cell.style.color = '#000000';
+        // Si es TH (encabezado)
+        if (element.tagName === 'TH') {
+          element.style.cssText = `
+            border: 2px solid #333333 !important;
+            padding: 12px !important;
+            text-align: center !important;
+            background-color: #4CAF50 !important;
+            color: #ffffff !important;
+            font-family: Arial, sans-serif !important;
+            font-size: 16px !important;
+            font-weight: bold !important;
+          `;
+        }
+        
+        // Si es TD (celda de datos)
+        if (element.tagName === 'TD') {
+          element.style.cssText = `
+            border: 2px solid #333333 !important;
+            padding: 10px !important;
+            text-align: center !important;
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            font-family: Arial, sans-serif !important;
+            font-size: 14px !important;
+            font-weight: normal !important;
+          `;
+        }
+        
+        // Si es párrafo (como data-count)
+        if (element.tagName === 'P') {
+          element.style.cssText += `
+            color: #000000 !important;
+            font-size: 12px !important;
+            text-align: center !important;
+            margin: 10px 0 !important;
+            background-color: transparent !important;
+          `;
+        }
+        
+        // Aplicar recursivamente a todos los hijos
+        Array.from(element.children).forEach(child => {
+          forceTableStyles(child);
         });
       }
+      
+      // Aplicar estilos a todos los elementos
+      forceTableStyles(tableDiv);
+      
+      // Segunda pasada para asegurar que todo sea negro
+      tableDiv.querySelectorAll('*').forEach(el => {
+        if (el.tagName !== 'TH') { // Los TH deben ser blancos sobre verde
+          el.style.color = '#000000 !important';
+        }
+        el.style.fontFamily = 'Arial, sans-serif !important';
+      });
+      
+      // Tercera pasada específica para elementos problemáticos
+      tableDiv.querySelectorAll('h4').forEach(h4 => {
+        h4.style.color = '#000000 !important';
+        h4.style.backgroundColor = 'transparent !important';
+      });
+      
+      tableDiv.querySelectorAll('td').forEach(td => {
+        td.style.color = '#000000 !important';
+        td.style.backgroundColor = '#ffffff !important';
+      });
       
       tempContainer.appendChild(tableDiv);
     }
@@ -193,14 +358,50 @@ export async function downloadElementAsImage(elementId, filename = 'descarga.png
     // Agregar el contenedor temporal al DOM
     document.body.appendChild(tempContainer);
     
-    // 4. Usar html2canvas para capturar todo el contenedor
+    // 4. Usar html2canvas para capturar todo el contenedor con configuración mejorada
     console.log('Capturando imagen con html2canvas...');
+    console.log('Contenido del tempContainer:', tempContainer.innerHTML.substring(0, 500));
+    
     const finalCanvas = await window.html2canvas(tempContainer, {
-      backgroundColor: '#ffffff', // Fondo blanco
+      backgroundColor: '#ffffff', // Fondo blanco forzado
       scale: 2, // Mayor calidad
-      logging: false,
+      logging: true, // Activar logging para debug
       useCORS: true,
-      allowTaint: true
+      allowTaint: true,
+      ignoreElements: function(element) {
+        // Ignorar elementos que puedan causar problemas
+        return element.tagName === 'SCRIPT' || element.tagName === 'STYLE';
+      },
+      onclone: function(clonedDoc) {
+        // Forzar estilos en el documento clonado
+        console.log('Aplicando estilos en documento clonado...');
+        const clonedContainer = clonedDoc.querySelector('body > div');
+        if (clonedContainer) {
+          clonedContainer.style.color = '#000000 !important';
+          clonedContainer.style.backgroundColor = '#ffffff !important';
+          
+          // Forzar estilos en todos los elementos del clone
+          clonedContainer.querySelectorAll('*').forEach(el => {
+            el.style.color = '#000000 !important';
+            el.style.fontFamily = 'Arial, sans-serif !important';
+            
+            if (el.tagName === 'H3' || el.tagName === 'H4') {
+              el.style.color = '#000000 !important';
+              el.style.fontWeight = 'bold !important';
+            }
+            
+            if (el.tagName === 'TH') {
+              el.style.backgroundColor = '#4CAF50 !important';
+              el.style.color = '#ffffff !important';
+            }
+            
+            if (el.tagName === 'TD') {
+              el.style.backgroundColor = '#ffffff !important';
+              el.style.color = '#000000 !important';
+            }
+          });
+        }
+      }
     });
     
     // Remover el contenedor temporal
@@ -250,48 +451,72 @@ async function addInlineStyles(svg) {
       // TODO EL TEXTO EN NEGRO SIEMPRE para descarga (independiente del tema)
       element.setAttribute('fill', '#000000');
       element.setAttribute('stroke', 'none');
-      
-      // Aumentar tamaño de fuente para números de ejes en descarga
-      const textContent = element.textContent || '';
-      const isNumber = !isNaN(parseFloat(textContent)) && isFinite(textContent);
-      
-      if (isNumber) {
-        // Es un número de eje, aplicar tamaño grande
-        element.setAttribute('font-size', '20px');
-        element.setAttribute('font-weight', 'bold');
-      } else {
-        // Es una etiqueta de eje, aplicar tamaño normal
-        element.setAttribute('font-size', '25px');
-        element.setAttribute('font-weight', 'bold');
-      }
-      
-      // Aplicar familia de fuente
       element.setAttribute('font-family', 'Arial, sans-serif');
+      
+      // Determinar tipo de texto por contenido y posición
+      const textContent = element.textContent || '';
+      const parentClass = element.parentElement?.getAttribute('class') || '';
+      const transform = element.getAttribute('transform') || '';
+      
+      // Detectar números de los ejes
+      const isAxisNumber = !isNaN(parseFloat(textContent)) && isFinite(textContent) && 
+                          (parentClass.includes('tick') || parentClass.includes('axis'));
+      
+      // Detectar título principal (contiene "frente a")
+      const isMainTitle = textContent.includes('frente a');
+      
+      // Detectar etiquetas de ejes (generalmente tienen transform y son una sola letra o palabra)
+      const isAxisLabel = transform.includes('rotate') || 
+                         (textContent.length <= 3 && !isAxisNumber) ||
+                         (textContent.match(/^[A-Za-z]\s*$/));
+      
+      if (isMainTitle) {
+        // Título principal del gráfico
+        element.setAttribute('font-size', '18px');
+        element.setAttribute('font-weight', 'bold');
+      } else if (isAxisLabel) {
+        // Etiquetas de los ejes (X, Y)
+        element.setAttribute('font-size', '16px');
+        element.setAttribute('font-weight', 'bold');
+      } else if (isAxisNumber) {
+        // Números de los ejes
+        element.setAttribute('font-size', '12px');
+        element.setAttribute('font-weight', 'normal');
+      } else {
+        // Texto de leyenda u otros
+        element.setAttribute('font-size', '14px');
+        element.setAttribute('font-weight', 'normal');
+      }
     } 
     else if (tagName === 'circle') {
-      // Mantener el color de los puntos
-      element.setAttribute('fill', 'steelblue');
-      element.setAttribute('opacity', '0.7');
+      // Puntos de dispersión en rojo para mejor visibilidad
+      element.setAttribute('fill', '#e74c3c');
+      element.setAttribute('opacity', '0.8');
+      element.setAttribute('r', '5');
     } 
     else if (tagName === 'path') {
-      // Verificar si es la línea de regresión (roja) o los ejes
-      const currentStroke = element.getAttribute('stroke') || element.style.stroke;
-      const d = element.getAttribute('d');
+      // Verificar si es la línea de regresión o los ejes
+      const currentStroke = element.getAttribute('stroke') || element.style.stroke || '';
+      const strokeWidth = element.getAttribute('stroke-width') || element.style.strokeWidth || '';
+      const className = element.getAttribute('class') || '';
       
-      if (currentStroke === 'red' || currentStroke?.includes('red')) {
-        // Línea de regresión
-        element.setAttribute('stroke', 'red');
-        element.setAttribute('stroke-width', '2');
+      // Detectar línea de regresión por grosor y clase
+      if (strokeWidth === '3' || strokeWidth === '2' || 
+          className.includes('regression') || 
+          currentStroke.includes('red') || 
+          currentStroke.includes('blue') ||
+          currentStroke.includes('#e74c3c') || 
+          currentStroke.includes('#3498db')) {
+        // Es línea de regresión
+        const color = currentStroke.includes('blue') || currentStroke.includes('#3498db') ? '#3498db' : '#e74c3c';
+        element.setAttribute('stroke', color);
+        element.setAttribute('stroke-width', '3');
         element.setAttribute('fill', 'none');
-        element.setAttribute('opacity', '0.8');
-      } else if (d && (d.includes('M0') || d.includes('L0'))) {
-        // Probablemente son los ejes
+        element.setAttribute('opacity', '1');
+      } else {
+        // Son los ejes o domain paths
         element.setAttribute('stroke', '#000000');
         element.setAttribute('stroke-width', '1');
-        element.setAttribute('fill', 'none');
-      } else {
-        // Otros paths (como los ticks de los ejes)
-        element.setAttribute('stroke', '#000000');
         element.setAttribute('fill', 'none');
       }
     }
@@ -318,12 +543,12 @@ async function addInlineStyles(svg) {
     }
   });
   
-  // Asegurar que todos los elementos de texto de los ejes sean negros con tamaño aumentado
+  // Asegurar que todos los elementos de texto de los ejes sean negros con tamaño corregido
   clone.querySelectorAll('.tick text, .axis text').forEach(text => {
     text.setAttribute('fill', '#000000');
     text.setAttribute('stroke', 'none');
-    text.setAttribute('font-size', '20px'); // Tamaño fijo para números de ejes
-    text.setAttribute('font-weight', 'bold');
+    text.setAttribute('font-size', '14px'); // Tamaño más pequeño para números de ejes
+    text.setAttribute('font-weight', 'normal');
     text.setAttribute('font-family', 'Arial, sans-serif');
   });
   
@@ -338,22 +563,54 @@ async function addInlineStyles(svg) {
   clone.querySelectorAll('text').forEach(text => {
     text.setAttribute('fill', '#000000');
     text.setAttribute('stroke', 'none');
-    
-    // Determinar si es un número de eje o una etiqueta
-    const textContent = text.textContent || '';
-    const isNumber = !isNaN(parseFloat(textContent)) && isFinite(textContent);
-    
-    if (isNumber) {
-      // Números de los ejes
-      text.setAttribute('font-size', '20px');
-      text.setAttribute('font-weight', 'bold');
-    } else {
-      // Etiquetas de los ejes (X, Y)
-      text.setAttribute('font-size', '25px');
-      text.setAttribute('font-weight', 'bold');
-    }
-    
     text.setAttribute('font-family', 'Arial, sans-serif');
+    
+    // Determinar tipo de texto más específicamente
+    const textContent = text.textContent || '';
+    const parentClass = text.parentElement?.getAttribute('class') || '';
+    const transform = text.getAttribute('transform') || '';
+    const y = parseFloat(text.getAttribute('y') || '0');
+    const x = parseFloat(text.getAttribute('x') || '0');
+    
+    // Detectar título principal (generalmente en la parte superior)
+    const isMainTitle = textContent.includes('frente a') || y < 30;
+    
+    // Detectar números de los ejes
+    const isAxisNumber = !isNaN(parseFloat(textContent)) && isFinite(textContent) && 
+                        (parentClass.includes('tick') || 
+                         text.closest('.tick') || 
+                         text.closest('[class*="axis"]'));
+    
+    // Detectar etiquetas de ejes (X, Y)
+    const isAxisLabel = transform.includes('rotate') || 
+                       (textContent.length <= 3 && !isAxisNumber && !isMainTitle) ||
+                       (x > 200 && y > 400) || // Etiqueta X (abajo centro)
+                       (x < 50); // Etiqueta Y (izquierda)
+    
+    // Detectar leyenda (generalmente en esquina superior derecha)
+    const isLegendText = x > 400 || textContent.includes('Datos') || textContent.includes('Regresión');
+    
+    if (isMainTitle) {
+      // Título principal
+      text.setAttribute('font-size', '18px');
+      text.setAttribute('font-weight', 'bold');
+    } else if (isAxisLabel) {
+      // Etiquetas de los ejes
+      text.setAttribute('font-size', '16px');
+      text.setAttribute('font-weight', 'bold');
+    } else if (isAxisNumber) {
+      // Números de los ejes
+      text.setAttribute('font-size', '12px');
+      text.setAttribute('font-weight', 'normal');
+    } else if (isLegendText) {
+      // Texto de la leyenda
+      text.setAttribute('font-size', '12px');
+      text.setAttribute('font-weight', 'normal');
+    } else {
+      // Cualquier otro texto
+      text.setAttribute('font-size', '14px');
+      text.setAttribute('font-weight', 'normal');
+    }
   });
   
   return new XMLSerializer().serializeToString(clone);
