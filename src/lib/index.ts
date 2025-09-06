@@ -17,6 +17,6 @@ export { DOWNLOAD_CONFIG } from './constants/index.js';
 
 // Types
 export type { DownloadOptions } from './services/image-download.js';
-export type { VisitorCount, VisitorCounterConfig } from './services/visitor-counter.js';
+export type { VisitorCounterConfig } from './services/visitor-counter.js';
 export type { Theme, ThemeConfig } from './services/theme.js';
 export type { DownloadConfig } from './constants/download.js';

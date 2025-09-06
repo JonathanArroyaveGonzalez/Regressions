@@ -15,8 +15,6 @@ const { title } = Astro.props;
 		<link rel="icon" type="image" href="https://cdn.icon-icons.com/icons2/542/PNG/512/graph-increase_icon-icons.com_53133.png" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
-		<link rel="stylesheet" href="/src/styles/global.css" />
-		<link rel="stylesheet" href="/src/styles/graph-styles.css" />
 	</head>
 	<body>
 		<nav class="main-nav">
@@ -51,9 +49,7 @@ const { title } = Astro.props;
 			
 			// Initialize visitor counter if element exists
 			if (document.getElementById('visitor-counter')) {
-				initializeVisitorCounter('visitor-counter', {
-					namespace: 'physics-lab-visits'
-				});
+				initializeVisitorCounter('visitor-counter');
 			}
 			
 			// Menu toggle functionality
@@ -299,4 +295,9 @@ const { title } = Astro.props;
 			Courier New,
 			monospace;
 	}
+</style>
+
+<style is:global>
+	@import '../styles/global.css';
+	@import '../styles/graph-styles.css';
 </style>
