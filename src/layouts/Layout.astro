@@ -15,14 +15,57 @@ const { title } = Astro.props;
 		<link rel="icon" type="image" href="https://cdn.icon-icons.com/icons2/542/PNG/512/graph-increase_icon-icons.com_53133.png" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
-		<link rel="stylesheet" href="/graph-styles.css" />
+		<link rel="stylesheet" href="/src/styles/global.css" />
+		<link rel="stylesheet" href="/src/styles/graph-styles.css" />
 	</head>
 	<body>
-			<div style="display: flex; justify-content: flex-end; gap: 1rem; margin-bottom: 1rem;">
-				<button id="theme-toggle-btn" style="padding: 0.5rem 1rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold;">🌗 Cambiar tema</button>
+		<nav class="main-nav">
+			<div class="nav-container">
+				<div class="nav-brand">
+					<a href="/">⚛️ Physics Lab</a>
+				</div>
+				<div class="nav-menu" id="nav-menu">
+					<a href="/regresiones" class="nav-link">📊 Regresiones</a>
+					<a href="/ley-hooke" class="nav-link">🔗 Ley de Hooke</a>
+					<a href="/error-porcentual" class="nav-link">🎯 % Error</a>
+					<a href="/acerca-de" class="nav-link">ℹ️ Acerca de</a>
+					<a href="/tutorial" class="nav-link">📖 Tutorial</a>
+				</div>
+				<div class="nav-controls">
+					<button id="theme-toggle-btn" class="theme-btn">🌗</button>
+					<button class="nav-toggle" id="nav-toggle">☰</button>
+				</div>
 			</div>
+		</nav>
+		<main class="main-content">
 			<slot />
-			<script type="module" src="/theme.js"></script>
+		</main>
+		<script>
+			import { initializeTheme, initializeVisitorCounter } from '../lib/index.js';
+			
+			// Initialize theme service
+			initializeTheme({
+				toggleButtonId: 'theme-toggle-btn',
+				storageKey: 'physics-lab-theme'
+			});
+			
+			// Initialize visitor counter if element exists
+			if (document.getElementById('visitor-counter')) {
+				initializeVisitorCounter('visitor-counter', {
+					namespace: 'physics-lab-visits'
+				});
+			}
+			
+			// Menu toggle functionality
+			const navToggle = document.getElementById('nav-toggle');
+			const navMenu = document.getElementById('nav-menu');
+			
+			if (navToggle && navMenu) {
+				navToggle.addEventListener('click', function() {
+					navMenu.classList.toggle('active');
+				});
+			}
+		</script>
 	</body>
 </html>
 <style is:global>
@@ -86,6 +129,164 @@ const { title } = Astro.props;
    html.light-theme .button-tutorial:active {
 	   background-color: #003d7f;
 	   border-color: #003d7f;
+   }
+
+   /* Navigation Styles */
+   .main-nav {
+	   background: rgba(19, 21, 26, 0.95);
+	   backdrop-filter: blur(10px);
+	   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	   position: sticky;
+	   top: 0;
+	   z-index: 1000;
+	   transition: all 0.3s ease;
+   }
+
+   html.light-theme .main-nav {
+	   background: rgba(247, 247, 247, 0.95);
+	   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+   }
+
+   .nav-container {
+	   max-width: 1200px;
+	   margin: 0 auto;
+	   display: flex;
+	   justify-content: space-between;
+	   align-items: center;
+	   padding: 0.5rem 1rem;
+   }
+
+   .nav-brand a {
+	   font-size: 1.5rem;
+	   font-weight: bold;
+	   color: #fff;
+	   text-decoration: none;
+	   transition: color 0.3s;
+   }
+
+   html.light-theme .nav-brand a {
+	   color: #181818;
+   }
+
+   .nav-menu {
+	   display: flex;
+	   gap: 2rem;
+	   list-style: none;
+	   margin: 0;
+	   padding: 0;
+   }
+
+   .nav-link {
+	   color: #fff;
+	   text-decoration: none;
+	   padding: 0.5rem 1rem;
+	   border-radius: 5px;
+	   transition: all 0.3s ease;
+	   font-weight: 500;
+   }
+
+   .nav-link:hover {
+	   background: rgba(136, 58, 234, 0.2);
+	   transform: translateY(-2px);
+   }
+
+   html.light-theme .nav-link {
+	   color: #181818;
+   }
+
+   html.light-theme .nav-link:hover {
+	   background: rgba(0, 123, 255, 0.1);
+   }
+
+   .nav-controls {
+	   display: flex;
+	   gap: 1rem;
+	   align-items: center;
+   }
+
+   .theme-btn {
+	   padding: 0.5rem 1rem;
+	   border-radius: 5px;
+	   border: none;
+	   cursor: pointer;
+	   font-weight: bold;
+	   background: rgba(136, 58, 234, 0.2);
+	   color: #fff;
+	   transition: all 0.3s ease;
+   }
+
+   .theme-btn:hover {
+	   background: rgba(136, 58, 234, 0.4);
+   }
+
+   html.light-theme .theme-btn {
+	   background: rgba(0, 123, 255, 0.2);
+	   color: #181818;
+   }
+
+   html.light-theme .theme-btn:hover {
+	   background: rgba(0, 123, 255, 0.4);
+   }
+
+   .nav-toggle {
+	   display: none;
+	   background: none;
+	   border: none;
+	   color: #fff;
+	   font-size: 1.5rem;
+	   cursor: pointer;
+   }
+
+   html.light-theme .nav-toggle {
+	   color: #181818;
+   }
+
+   .main-content {
+	   padding-top: 1rem;
+   }
+
+   /* Responsive Design */
+   @media (max-width: 768px) {
+	   .nav-menu {
+		   position: absolute;
+		   top: 100%;
+		   left: 0;
+		   right: 0;
+		   background: rgba(19, 21, 26, 0.98);
+		   flex-direction: column;
+		   gap: 0;
+		   padding: 1rem;
+		   transform: translateY(-100%);
+		   opacity: 0;
+		   visibility: hidden;
+		   transition: all 0.3s ease;
+	   }
+
+	   html.light-theme .nav-menu {
+		   background: rgba(247, 247, 247, 0.98);
+	   }
+
+	   .nav-menu.active {
+		   transform: translateY(0);
+		   opacity: 1;
+		   visibility: visible;
+	   }
+
+	   .nav-toggle {
+		   display: block;
+	   }
+
+	   .nav-link {
+		   display: block;
+		   width: 100%;
+		   text-align: center;
+		   padding: 1rem;
+		   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	   }
+
+	   html.light-theme .nav-link {
+		   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	   }
    }
 	code {
 		font-family:

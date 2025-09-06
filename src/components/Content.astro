@@ -26,6 +26,32 @@
   </div>
 </div>
 
+<!-- Modal para seleccionar tipo de regresión -->
+<div id="regression-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>🎯 Selecciona el tipo de regresión</h3>
+    </div>
+    <div class="modal-body">
+      <div class="regression-options">
+        <button id="linear-btn" class="regression-option-btn">
+          <div class="option-icon">📈</div>
+          <div class="option-title">Regresión Lineal</div>
+          <div class="option-desc">y = mx + b</div>
+        </button>
+        <button id="quadratic-btn" class="regression-option-btn">
+          <div class="option-icon">📐</div>
+          <div class="option-title">Regresión Cuadrática</div>
+          <div class="option-desc">y = ax² + bx + c</div>
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="cancel-btn" class="cancel-btn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <style is:global>
   html.light-theme input[type="number"],
   html.light-theme input[type="text"],
@@ -157,7 +183,7 @@
   }
 
   #graph-container text {
-    font-size: 14px;
+    font-size: 12px !important;
   }
 
   #graph-container path {
@@ -165,8 +191,8 @@
   }
 
   #graph-container circle {
-    fill: steelblue;
-    opacity: 0.7;
+    fill: #e74c3c;
+    opacity: 0.8;
   }
   #graph-container:hover {
     transform: scale(1.1);
@@ -181,8 +207,635 @@
     transform: scale(1.05);
     margin: 2%;
   }
+
+  /* Modal Styles */
+  .modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+  }
+
+  .modal-content {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .modal-header {
+    padding: 20px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.5rem;
+  }
+
+  .modal-body {
+    padding: 30px 20px;
+  }
+
+  .regression-options {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .regression-option-btn {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    max-width: 180px;
+    text-align: center;
+  }
+
+  .regression-option-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
+    background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+  }
+
+  .option-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+
+  .option-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+  }
+
+  .option-desc {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    font-family: 'Courier New', monospace;
+  }
+
+  .modal-footer {
+    padding: 20px;
+    text-align: center;
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .cancel-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .cancel-btn:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+  }
+
+  /* Responsive modal */
+  @media (max-width: 600px) {
+    .regression-options {
+      flex-direction: column;
+    }
+    
+    .regression-option-btn {
+      max-width: none;
+    }
+  }
+
+  /* Light theme adjustments for modal */
+  html.light-theme .modal-content {
+    background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+    color: #2c3e50;
+  }
+
+  html.light-theme .modal-header h3 {
+    color: #2c3e50;
+  }
+
+  html.light-theme .regression-option-btn {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+  }
+
+  /* Data table styles */
+  .data-table-wrapper {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+
+  .data-table-wrapper h4 {
+    margin: 0 0 15px 0;
+    color: #fff;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .data-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .data-results-table th {
+    background: #4CAF50;
+    color: white;
+    padding: 10px 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .data-results-table td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 0.85rem;
+  }
+
+  .data-results-table tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .data-results-table tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .data-count {
+    margin: 10px 0 0 0;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #ccc;
+  }
+
+  /* Light theme adjustments for data table */
+  html.light-theme .data-table-wrapper {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  html.light-theme .data-table-wrapper h4 {
+    color: #2c3e50;
+  }
+
+  html.light-theme .data-results-table {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  html.light-theme .data-results-table td {
+    color: #2c3e50;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  html.light-theme .data-results-table tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  html.light-theme .data-results-table tr:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  html.light-theme .data-count {
+    color: #7f8c8d;
+  }
 </style>
 
 <script>
-  import "../js/index.js";
+  // Regression analysis functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabla = document.getElementById('tabla');
+    const agregarFilaBtn = document.getElementById('agregarFila');
+    const eliminarFilaBtn = document.getElementById('eliminarFila');
+    const graficarBtn = document.getElementById('graficar');
+    
+    // Add row functionality
+    if (agregarFilaBtn) {
+      agregarFilaBtn.addEventListener('click', function() {
+        const tbody = tabla.querySelector('tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td><input type="number" class="input-x" /></td>
+          <td><input type="number" class="input-y" /></td>
+        `;
+        tbody.appendChild(newRow);
+      });
+    }
+    
+    // Remove row functionality
+    if (eliminarFilaBtn) {
+      eliminarFilaBtn.addEventListener('click', function() {
+        const tbody = tabla.querySelector('tbody');
+        const rows = tbody.querySelectorAll('tr');
+        if (rows.length > 1) {
+          tbody.removeChild(rows[rows.length - 1]);
+        }
+      });
+    }
+    
+    // Graph functionality
+    if (graficarBtn) {
+      graficarBtn.addEventListener('click', function() {
+        showRegressionModal();
+      });
+    }
+
+    // Modal functionality
+    const modal = document.getElementById('regression-modal');
+    const linearBtn = document.getElementById('linear-btn');
+    const quadraticBtn = document.getElementById('quadratic-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+
+    if (linearBtn) {
+      linearBtn.addEventListener('click', function() {
+        hideModal();
+        generateRegressionAnalysis('linear');
+      });
+    }
+
+    if (quadraticBtn) {
+      quadraticBtn.addEventListener('click', function() {
+        hideModal();
+        generateRegressionAnalysis('quadratic');
+      });
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', hideModal);
+    }
+
+    // Close modal when clicking outside
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          hideModal();
+        }
+      });
+    }
+  });
+
+  function showRegressionModal() {
+    const modal = document.getElementById('regression-modal');
+    if (modal) {
+      modal.style.display = 'block';
+    }
+  }
+
+  function hideModal() {
+    const modal = document.getElementById('regression-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+  
+  function generateRegressionAnalysis(regressionType: 'linear' | 'quadratic') {
+    try {
+      // Get variable names
+      const inputX = document.getElementById('inputX') as HTMLInputElement;
+      const inputY = document.getElementById('inputY') as HTMLInputElement;
+      const varX = inputX?.value || 'X';
+      const varY = inputY?.value || 'Y';
+      
+      // Collect data from table
+      const inputsX = document.querySelectorAll('.input-x');
+      const inputsY = document.querySelectorAll('.input-y');
+      
+      const data: [number, number][] = [];
+      for (let i = 0; i < inputsX.length; i++) {
+        const x = parseFloat((inputsX[i] as HTMLInputElement).value);
+        const y = parseFloat((inputsY[i] as HTMLInputElement).value);
+        if (!isNaN(x) && !isNaN(y)) {
+          data.push([x, y]);
+        }
+      }
+      
+      if (data.length < 2) {
+        alert('Se necesitan al menos 2 puntos válidos para realizar el análisis');
+        return;
+      }
+
+      if (regressionType === 'quadratic' && data.length < 3) {
+        alert('Se necesitan al menos 3 puntos para la regresión cuadrática');
+        return;
+      }
+      
+      // Perform regression based on type
+      let result;
+      if (regressionType === 'linear') {
+        result = (window as any).regression.linear(data);
+      } else {
+        result = (window as any).regression.polynomial(data, { order: 2 });
+      }
+      
+      // Use manual calculation for more precise R²
+      result.r2 = calculateR2(data, result, regressionType);
+      
+      // Display results
+      displayResults(data, result, regressionType, varX, varY);
+      displayGraph(data, result, regressionType, varX, varY);
+      displayDataTable(data, varX, varY);
+      
+    } catch (error) {
+      console.error('Error en análisis de regresión:', error);
+      alert('Error al generar el análisis. Verifica tus datos.');
+    }
+  }
+  
+  function displayResults(data: [number, number][], result: any, regressionType: 'linear' | 'quadratic', varX: string, varY: string) {
+    const contentText = document.getElementById('content-text');
+    if (!contentText) return;
+    
+    const equation = regressionType === 'linear' 
+      ? formatLinearEquation(result.equation, varX, varY)
+      : formatQuadraticEquation(result.equation, varX, varY);
+    
+    const title = regressionType === 'linear' ? 'Regresión Lineal' : 'Regresión Cuadrática';
+    const icon = regressionType === 'linear' ? '📈' : '📐';
+    
+    contentText.innerHTML = `
+      <div class="regression-results">
+        <h3>📊 Resultado del Análisis - ${title}</h3>
+        <div class="equation-block">
+          <p class="equation">${equation}</p>
+          <p class="correlation">R² = ${result.r2.toFixed(5)} (Coeficiente de determinación)</p>
+          <p class="data-info">📍 Datos analizados: ${data.length} puntos</p>
+        </div>
+      </div>
+    `;
+  }
+  
+  function calculateR2(data: [number, number][], result: any, regressionType: 'linear' | 'quadratic'): number {
+    // Calcular R² manualmente para mayor precisión
+    const n = data.length;
+    let sumY = 0;
+    let sumYSquared = 0;
+    let sumResidualSquared = 0;
+    
+    // Calcular la media de Y
+    for (const [x, y] of data) {
+      sumY += y;
+    }
+    const meanY = sumY / n;
+    
+    // Calcular suma de cuadrados total y residual
+    for (const [x, y] of data) {
+      // Valor predicho por la regresión
+      let predictedY;
+      if (regressionType === 'linear') {
+        const [m, b] = result.equation;
+        predictedY = m * x + b;
+      } else {
+        const [a, b, c] = result.equation;
+        predictedY = a * x * x + b * x + c;
+      }
+      
+      // Suma de cuadrados residual (diferencia entre valor real y predicho)
+      const residual = y - predictedY;
+      sumResidualSquared += residual * residual;
+      
+      // Suma de cuadrados total (diferencia entre valor real y media)
+      const deviation = y - meanY;
+      sumYSquared += deviation * deviation;
+    }
+    
+    // R² = 1 - (SS_res / SS_tot)
+    return 1 - (sumResidualSquared / sumYSquared);
+  }
+  
+  function formatLinearEquation(coefficients: number[], varX: string, varY: string): string {
+    const [slope, intercept] = coefficients;
+    const slopeStr = slope.toFixed(2);
+    const interceptStr = Math.abs(intercept).toFixed(2);
+    const sign = intercept >= 0 ? '+' : '-';
+    
+    return `${varY} = ${slopeStr}${varX} ${sign} ${interceptStr}`;
+  }
+  
+  function formatQuadraticEquation(coefficients: number[], varX: string, varY: string): string {
+    const [a, b, c] = coefficients;
+    const aStr = a.toFixed(2);
+    const bStr = Math.abs(b).toFixed(2);
+    const cStr = Math.abs(c).toFixed(2);
+    const bSign = b >= 0 ? '+' : '-';
+    const cSign = c >= 0 ? '+' : '-';
+    
+    return `${varY} = ${aStr}${varX}² ${bSign} ${bStr}${varX} ${cSign} ${cStr}`;
+  }
+  
+  function displayGraph(data: [number, number][], result: any, regressionType: 'linear' | 'quadratic', varX: string, varY: string) {
+    const container = document.getElementById('graph-container');
+    if (!container) return;
+    
+    // Clear previous graph
+    container.innerHTML = '';
+    
+    // Set up dimensions
+    const margin = { top: 80, right: 30, bottom: 70, left: 80 };
+    const width = 600 - margin.left - margin.right;
+    const height = 450 - margin.top - margin.bottom;
+    
+    // Create SVG
+    const svg = (window as any).d3.select('#graph-container')
+      .append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom);
+    
+    const g = svg.append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+    
+    // Add title
+    svg.append('text')
+      .attr('x', (width + margin.left + margin.right) / 2)
+      .attr('y', 25)
+      .attr('text-anchor', 'middle')
+      .style('font-size', '16px')
+      .style('font-weight', 'bold')
+      .text(`${varY} frente a ${varX}`);
+    
+    // Set up scales
+    const xExtent = (window as any).d3.extent(data, (d: [number, number]) => d[0]);
+    const yExtent = (window as any).d3.extent(data, (d: [number, number]) => d[1]);
+    
+    const xScale = (window as any).d3.scaleLinear()
+      .domain(xExtent)
+      .range([0, width]);
+    
+    const yScale = (window as any).d3.scaleLinear()
+      .domain(yExtent)
+      .range([height, 0]);
+    
+    // Add axes
+    g.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call((window as any).d3.axisBottom(xScale))
+      .selectAll('text')
+      .style('font-size', '11px');
+    
+    g.append('g')
+      .call((window as any).d3.axisLeft(yScale))
+      .selectAll('text')
+      .style('font-size', '11px');
+    
+    // Add axis labels
+    g.append('text')
+      .attr('transform', `translate(${width / 2}, ${height + 45})`)
+      .style('text-anchor', 'middle')
+      .style('font-size', '13px')
+      .style('font-weight', 'bold')
+      .text(varX);
+    
+    g.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', 0 - margin.left + 25)
+      .attr('x', 0 - (height / 2))
+      .attr('dy', '1em')
+      .style('text-anchor', 'middle')
+      .style('font-size', '13px')
+      .style('font-weight', 'bold')
+      .text(varY);
+    
+    // Add data points
+    g.selectAll('.dot')
+      .data(data)
+      .enter().append('circle')
+      .attr('class', 'dot')
+      .attr('cx', (d: [number, number]) => xScale(d[0]))
+      .attr('cy', (d: [number, number]) => yScale(d[1]))
+      .attr('r', 5)
+      .style('fill', '#e74c3c')
+      .style('opacity', 0.8);
+    
+    // Add regression line
+    const xRange = (window as any).d3.range(xExtent[0], xExtent[1], (xExtent[1] - xExtent[0]) / 100);
+    
+    let regressionLine;
+    let lineColor = '#e74c3c';
+    let lineLabel = '';
+    
+    if (regressionType === 'linear') {
+      lineColor = '#3498db';
+      lineLabel = 'Regresión Lineal';
+      regressionLine = (window as any).d3.line()
+        .x((d: number) => xScale(d))
+        .y((d: number) => yScale(result.equation[0] * d + result.equation[1]));
+    } else {
+      lineColor = '#0ecf55';
+      lineLabel = 'Regresión Cuadrática';
+      regressionLine = (window as any).d3.line()
+        .x((d: number) => xScale(d))
+        .y((d: number) => yScale(result.equation[0] * d * d + result.equation[1] * d + result.equation[2]));
+    }
+    
+    g.append('path')
+      .datum(xRange)
+      .attr('class', 'regression-line')
+      .attr('d', regressionLine)
+      .style('fill', 'none')
+      .style('stroke', lineColor)
+      .style('stroke-width', 3);
+    
+    // Add legend (positioned below title, more compact)
+    const legend = g.append('g')
+      .attr('class', 'legend')
+      .attr('transform', `translate(${width - 140}, -35)`);
+    
+    legend.append('circle')
+      .attr('cx', 0)
+      .attr('cy', 0)
+      .attr('r', 3)
+      .style('fill', '#e74c3c')
+      .style('opacity', 0.8);
+    
+    legend.append('text')
+      .attr('x', 8)
+      .attr('y', 3)
+      .text('Datos experimentales')
+      .style('font-size', '10px');
+    
+    legend.append('line')
+      .attr('x1', 0)
+      .attr('y1', 15)
+      .attr('x2', 18)
+      .attr('y2', 15)
+      .style('stroke', lineColor)
+      .style('stroke-width', 2);
+    
+    legend.append('text')
+      .attr('x', 22)
+      .attr('y', 18)
+      .text(lineLabel)
+      .style('font-size', '10px');
+  }
+
+  function displayDataTable(data: [number, number][], varX: string, varY: string) {
+    const dataTableContainer = document.getElementById('data-table');
+    if (!dataTableContainer) return;
+
+    let tableHTML = `
+      <div class="data-table-wrapper">
+        <h4>📋 Datos Experimentales</h4>
+        <table class="data-results-table">
+          <thead>
+            <tr>
+              <th>${varX}</th>
+              <th>${varY}</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    data.forEach((point, index) => {
+      tableHTML += `
+        <tr>
+          <td>${point[0].toFixed(2)}</td>
+          <td>${point[1].toFixed(2)}</td>
+        </tr>
+      `;
+    });
+
+    tableHTML += `
+          </tbody>
+        </table>
+        <p class="data-count">Total: ${data.length} puntos</p>
+      </div>
+    `;
+
+    dataTableContainer.innerHTML = tableHTML;
+  }
+  
+  // Make functions globally available
+  (window as any).generateRegressionAnalysis = generateRegressionAnalysis;
 </script>
