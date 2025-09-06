@@ -55,7 +55,7 @@ defaults:
 
 # Mostrar README como página principal
 readme_index:
-  enabled: true
+  enabled: false
 
 # Configuración adicional
 show_downloads: true
