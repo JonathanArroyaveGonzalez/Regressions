@@ -1,22 +1,15 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
-import Content from "../components/Content.astro";
 ---
 
-<Layout title="Physical Regressions">
-  <!-- Contador de visitas usando uCounter.com -->
-  <div style="position: fixed; bottom: 10px; right: 16px; font-size: 0.9em; color: #888; background: rgba(255,255,255,0.7); border-radius: 8px; padding: 2px 10px; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">
-    <!-- uCounter.com Code Start  -->
-    <div style="text-align: center;"><script type="text/javascript" src="https://yo.ucounter.com/25/lzqd/09/s/11/"></script><script type="text/javascript" src="https://ucounter.com/stat.js"></script></div>
-    <!-- uCounter.com Code End -->
+<Layout title="Physics Lab">
+  <!-- Contador de visitas moderno -->
+  <div id="visitor-counter" style="position: fixed; bottom: 10px; right: 16px; font-size: 0.9em; color: #888; background: rgba(255,255,255,0.9); border-radius: 8px; padding: 6px 12px; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.1); backdrop-filter: blur(4px);">
+    <span class="counter-label">👁️ Visitas: </span>
+    <span class="counter-value">...</span>
   </div>
   <main>
-    <!-- Contenedor oculto solo para exportar la imagen -->
-    <div id="export-container" style="background: transparent; display:none; position: absolute; left: -9999px; top: 0;">
-      <div id="content-text-export"></div>
-      <div id="content-graph-export"></div>
-    </div>
     <svg
       class="astro-a"
       width="495"
@@ -47,7 +40,7 @@ import Content from "../components/Content.astro";
     </svg>
     <h1>
       Navegando por la Física <span class="text-gradient"
-        >con Regresiones Lineales y Cuadráticas</span
+        >con Herramientas Interactivas</span
       >
     </h1>
 
@@ -55,106 +48,196 @@ import Content from "../components/Content.astro";
       <p id="text-welcome">
         <a href="https://github.com/JonathanArroyaveGonzalez/Regressions"
           ><img
+            id="typing-svg"
             src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=F3F7E7AC&background=FF238200&center=true&random=false&width=435&height=70&lines=%C2%A1%F0%9F%91%8BBienvenido+a+nuestra++pagina+%F0%9F%91%8B!;Quieres+saber+mas+..%F0%9F%9A%80"
             alt="Typing SVG"
           /></a
         >
       </p>
     </p>
-    <p class="instructions">
-      <strong
-        >¡Bienvenido a nuestra plataforma web diseñada especialmente para
-        estudiantes apasionados por la física!</strong
-      > si es tu primera vez aquí, te invitamos a explorar las diferentes herramientas
-      que ponemos a tu disposición para facilitar tu aprendizaje y comprensión de
-      la física mediante nuestro tutorial paso a paso.
-      <a href="/tutorial/" class="button-tutorial"
-        >Ver tutorial 🚀</a
-      >
 
-      <br />
-      Por defecto, las variables se denominan <code>"X" y "Y"</code>, pero
-      puedes personalizar estos nombres ingresando los valores deseados en los
-      campos correspondientes. Estos nombres se utilizarán tanto en el título de
-      la gráfica como en la ecuación de la regresión ya sea lineal o cuadrática. <strong
-        >¡Explora y experimenta con confianza! 🚏</strong
-      >
-    </p>
-
-    <Content />
-
-    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-bottom: 1rem;">
-      <button id="download-btn" style="padding: 0.5rem 1rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; background: #00B600; color: white;">⬇️ Descargar gráfica y tabla</button>
-    </div>
-
-    <!-- Visualización real de la gráfica y tabla debajo de la entrada de datos -->
-    <div id="content-text"></div>
-    <div class="content-graph">
-      <div id="graph-container"></div>
-      <div id="data-table"></div>
-    </div>
-
-    <!-- Contenedor oculto solo para exportar la imagen -->
-    <div id="export-container" style="background: transparent; display:none;">
-      <div id="content-text-export"></div>
-      <div class="content-graph">
-        <div id="graph-container-export"></div>
-        <div id="data-table-export"></div>
+    <!-- Sección de herramientas disponibles -->
+    <div class="tools-showcase">
+      <h2>🧰 Laboratorio de Física Interactivo</h2>
+      <p class="showcase-description">
+        Explora nuestras herramientas especializadas para análisis de datos experimentales y simulación física. Cada herramienta está diseñada para facilitar tu comprensión de conceptos complejos mediante visualizaciones interactivas.
+      </p>
+      
+      <div class="tools-grid">
+        <a href="/regresiones" class="tool-card">
+          <div class="tool-icon">📊</div>
+          <h3>Análisis de Regresiones</h3>
+          <p>Calcula regresiones lineales y cuadráticas con precisión científica. Incluye visualización interactiva y exportación de resultados.</p>
+          <div class="tool-features">
+            <span class="feature">✓ Regresión Lineal</span>
+            <span class="feature">✓ Regresión Cuadrática</span>
+            <span class="feature">✓ Exportación de gráficos</span>
+          </div>
+        </a>
+        
+        <a href="/ley-hooke" class="tool-card">
+          <div class="tool-icon">🔗</div>
+          <h3>Simulación Ley de Hooke</h3>
+          <p>Experimenta con sistemas masa-resorte interactivos. Observa en tiempo real cómo cambian las fuerzas y la energía.</p>
+          <div class="tool-features">
+            <span class="feature">✓ Simulación en tiempo real</span>
+            <span class="feature">✓ Parámetros ajustables</span>
+            <span class="feature">✓ Análisis energético</span>
+          </div>
+        </a>
+        
+        <a href="/error-porcentual" class="tool-card">
+          <div class="tool-icon">🎯</div>
+          <h3>Calculadora de Error</h3>
+          <p>Evalúa la precisión de tus mediciones experimentales comparándolas con valores teóricos esperados.</p>
+          <div class="tool-features">
+            <span class="feature">✓ Error absoluto y relativo</span>
+            <span class="feature">✓ Interpretación automática</span>
+            <span class="feature">✓ Historial de cálculos</span>
+          </div>
+        </a>
       </div>
     </div>
 
-    <ul role="list" class="link-card-grid">
-      <Card
-        href="/tutorial/"
-        title="Tutorial 🚀"
-        body="Aprende a realizar regresiones con nuestra guia paso a paso."
-      />
-      <Card
-        href="/acerca-de/"
-        title="Acerca de 💡"
-        body="Información sobre nosotros y el proyecto."
-      />
-    </ul>
-  </main>
+    <!-- Sección de introducción mejorada -->
+    <div class="intro-section">
+      <h2>🚀 Comienza Tu Exploración Científica</h2>
+      <div class="intro-grid">
+        <div class="intro-card">
+          <div class="intro-icon">📚</div>
+          <h3>¿Primera vez aquí?</h3>
+          <p>Te recomendamos comenzar con nuestro tutorial interactivo que te guiará paso a paso por todas las herramientas disponibles.</p>
+          <a href="/tutorial/" class="cta-button tutorial">Ver Tutorial 🎓</a>
+        </div>
+        
+        <div class="intro-card">
+          <div class="intro-icon">🔬</div>
+          <h3>Para Investigadores</h3>
+          <p>Accede directamente a nuestras herramientas de análisis para realizar cálculos precisos y generar visualizaciones profesionales.</p>
+          <a href="/regresiones" class="cta-button analysis">Comenzar Análisis �</a>
+        </div>
+        
+        <div class="intro-card">
+          <div class="intro-icon">💡</div>
+          <h3>Aprende Más</h3>
+          <p>Descubre la historia detrás del proyecto, nuestra metodología científica y cómo puedes contribuir a la comunidad.</p>
+          <a href="/acerca-de/" class="cta-button about">Acerca de Nosotros ℹ️</a>
+        </div>
+      </div>
+    </div>
 
-  <!-- El script de tema ya está incluido globalmente desde Layout.astro -->
-  <script type="module">
-  import { downloadElementAsImage } from '/download.js';
-    document.getElementById('download-btn').addEventListener('click', function() {
-      // Clonar ecuación, gráfica y tabla al contenedor de exportación
-      const contentText = document.getElementById('content-text');
-      const contentGraph = document.querySelector('.content-graph');
-      const exportText = document.getElementById('content-text-export');
-      const exportGraph = document.getElementById('content-graph-export');
-      if (contentText && exportText) {
-        exportText.innerHTML = contentText.innerHTML;
+    <!-- Sección de características destacadas -->
+    <div class="features-highlight">
+      <h2>🌟 ¿Por Qué Elegir Physics Lab?</h2>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-icon">🎨</div>
+          <h4>Visualización Avanzada</h4>
+          <p>Gráficos interactivos creados con D3.js que hacen que los datos cobren vida</p>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">🔬</div>
+          <h4>Precisión Científica</h4>
+          <p>Algoritmos basados en métodos matemáticos rigurosos y validados</p>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">🌐</div>
+          <h4>Acceso Universal</h4>
+          <p>Funciona en cualquier dispositivo con navegador, sin instalación</p>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">📖</div>
+          <h4>Enfoque Educativo</h4>
+          <p>Explicaciones detalladas y pasos de cálculo para potenciar el aprendizaje</p>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">🆓</div>
+          <h4>Código Abierto</h4>
+          <p>Proyecto libre y colaborativo alojado en GitHub</p>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">⚡</div>
+          <h4>Rendimiento Optimizado</h4>
+          <p>Construido con Astro para máxima velocidad y eficiencia</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegación rápida -->
+    <div class="quick-nav">
+      <h2>🧭 Navegación Rápida</h2>
+      <ul role="list" class="link-card-grid">
+        <Card
+          href="/regresiones/"
+          title="📊 Análisis de Regresiones"
+          body="Accede directamente a la herramienta de cálculo de regresiones lineales y cuadráticas."
+        />
+        <Card
+          href="/tutorial/"
+          title="🚀 Tutorial Interactivo"
+          body="Aprende a usar todas las herramientas con nuestra guía paso a paso."
+        />
+        <Card
+          href="/acerca-de/"
+          title="💡 Acerca del Proyecto"
+          body="Conoce más sobre Physics Lab, nuestra metodología y cómo contribuir."
+        />
+        <Card
+          href="https://github.com/JonathanArroyaveGonzalez/Regressions"
+          title="💻 Código en GitHub"
+          body="Explora el código fuente y contribuye al desarrollo del proyecto."
+        />
+      </ul>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  // URLs para los dos temas
+  const typingSvgUrls = {
+    dark: "https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=F3F7E7AC&background=FF238200&center=true&random=false&width=435&height=70&lines=%C2%A1%F0%9F%91%8BBienvenido+a+nuestra++pagina+%F0%9F%91%8B!;Quieres+saber+mas+..%F0%9F%9A%80",
+    light: "https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=000000&background=FF238200&center=true&random=false&width=435&height=70&lines=%C2%A1%F0%9F%91%8BBienvenido+a+nuestra++pagina+%F0%9F%91%8B!;Quieres+saber+mas+..%F0%9F%9A%80"
+  };
+
+  function updateTypingSvg() {
+    const typingSvgImg = document.getElementById('typing-svg') as HTMLImageElement;
+    if (!typingSvgImg) return;
+    
+    const isLightTheme = document.documentElement.classList.contains('light-theme');
+    const newUrl = isLightTheme ? typingSvgUrls.light : typingSvgUrls.dark;
+    
+    if (typingSvgImg.src !== newUrl) {
+      typingSvgImg.src = newUrl;
+    }
+  }
+
+  // Actualizar la imagen cuando se carga la página
+  document.addEventListener('DOMContentLoaded', updateTypingSvg);
+
+  // Observar cambios en las clases del html para detectar cambios de tema
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        updateTypingSvg();
       }
-      if (contentGraph && exportGraph) {
-        exportGraph.innerHTML = contentGraph.innerHTML;
-        exportGraph.className = contentGraph.className;
-      }
-      // Inyectar todos los estilos globales y locales para la exportación
-      const exportContainer = document.getElementById('export-container');
-      let styles = '';
-      document.querySelectorAll('style, link[rel="stylesheet"]').forEach(style => {
-        if (style.tagName === 'STYLE') styles += style.innerHTML;
-      });
-      let style = document.createElement('style');
-      style.innerHTML = styles;
-      exportContainer.appendChild(style);
-      exportContainer.style.display = 'block';
-      // Descargar solo el contenedor de ecuación, gráfica y tabla
-      setTimeout(() => {
-        downloadElementAsImage('export-container', 'grafica_tabla.png');
-        // Limpiar estilos después de descargar
-        setTimeout(()=>{
-          exportContainer.style.display = 'none';
-          if (style.parentNode) style.parentNode.removeChild(style);
-        }, 500);
-      }, 100);
     });
-  </script>
-  <script type="module" src="/download.js"></script>
+  });
+
+  // Iniciar la observación
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  });
+
+  // Actualizar inmediatamente si ya hay un tema establecido
+  updateTypingSvg();
+</script>
+
   <style>
     html.light-theme {
       --accent: 136, 58, 234;
@@ -299,6 +382,396 @@ import Content from "../components/Content.astro";
       grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
       gap: 2rem;
       padding: 0;
+    }
+
+    /* Estilos para la sección de herramientas */
+    .tools-showcase {
+      margin: 3rem 0;
+      padding: 3rem 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    html.light-theme .tools-showcase {
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .tools-showcase h2 {
+      text-align: center;
+      color: rgb(var(--accent-light));
+      margin-bottom: 1rem;
+      font-size: 2.5rem;
+    }
+
+    html.light-theme .tools-showcase h2 {
+      color: #007bff;
+    }
+
+    .showcase-description {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+      opacity: 0.9;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+
+    .tool-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 2rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    html.light-theme .tool-card {
+      background: rgba(0, 0, 0, 0.05);
+      border: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .tool-card:hover {
+      transform: translateY(-8px);
+      border-color: rgb(var(--accent));
+      background: rgba(var(--accent), 0.1);
+      box-shadow: 0 15px 40px rgba(var(--accent), 0.3);
+    }
+
+    html.light-theme .tool-card:hover {
+      border-color: #007bff;
+      background: rgba(0, 123, 255, 0.1);
+      box-shadow: 0 15px 40px rgba(0, 123, 255, 0.2);
+    }
+
+    .tool-icon {
+      font-size: 3.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .tool-card h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.5rem;
+      color: rgb(var(--accent-light));
+      text-align: center;
+    }
+
+    html.light-theme .tool-card h3 {
+      color: #007bff;
+    }
+
+    .tool-card p {
+      margin: 0 0 1.5rem 0;
+      opacity: 0.8;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .tool-features {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .feature {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.4rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    html.light-theme .feature {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Sección de introducción */
+    .intro-section {
+      margin: 4rem 0;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, rgba(var(--accent), 0.1), rgba(var(--accent-light), 0.05));
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    html.light-theme .intro-section {
+      background: linear-gradient(135deg, rgba(0, 123, 255, 0.1), rgba(49, 10, 101, 0.05));
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .intro-section h2 {
+      text-align: center;
+      color: rgb(var(--accent-light));
+      margin-bottom: 3rem;
+      font-size: 2.5rem;
+    }
+
+    html.light-theme .intro-section h2 {
+      color: #007bff;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .intro-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    html.light-theme .intro-card {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .intro-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    html.light-theme .intro-card:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .intro-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .intro-card h3 {
+      margin-bottom: 1rem;
+      color: rgb(var(--accent-light));
+    }
+
+    html.light-theme .intro-card h3 {
+      color: #007bff;
+    }
+
+    .intro-card p {
+      margin-bottom: 1.5rem;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .cta-button.tutorial {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    .cta-button.tutorial:hover {
+      background: #0056b3;
+      border-color: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    .cta-button.analysis {
+      background: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    .cta-button.analysis:hover {
+      background: #218838;
+      border-color: #218838;
+      transform: translateY(-2px);
+    }
+
+    .cta-button.about {
+      background: #6f42c1;
+      color: white;
+      border-color: #6f42c1;
+    }
+
+    .cta-button.about:hover {
+      background: #5a36a3;
+      border-color: #5a36a3;
+      transform: translateY(-2px);
+    }
+
+    /* Sección de características destacadas */
+    .features-highlight {
+      margin: 4rem 0;
+      padding: 3rem 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    html.light-theme .features-highlight {
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .features-highlight h2 {
+      text-align: center;
+      color: rgb(var(--accent-light));
+      margin-bottom: 3rem;
+      font-size: 2.5rem;
+    }
+
+    html.light-theme .features-highlight h2 {
+      color: #007bff;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    html.light-theme .feature-item {
+      background: rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-item:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(var(--accent), 0.3);
+    }
+
+    html.light-theme .feature-item:hover {
+      background: rgba(0, 0, 0, 0.1);
+      border-color: rgba(0, 123, 255, 0.3);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-item h4 {
+      margin-bottom: 0.5rem;
+      color: rgb(var(--accent-light));
+    }
+
+    html.light-theme .feature-item h4 {
+      color: #007bff;
+    }
+
+    .feature-item p {
+      margin: 0;
+      opacity: 0.8;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    /* Navegación rápida */
+    .quick-nav {
+      margin: 4rem 0 2rem 0;
+      padding: 3rem 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    html.light-theme .quick-nav {
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .quick-nav h2 {
+      text-align: center;
+      color: rgb(var(--accent-light));
+      margin-bottom: 2rem;
+      font-size: 2.2rem;
+    }
+
+    html.light-theme .quick-nav h2 {
+      color: #007bff;
+    }
+
+    .link-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      padding: 0;
+    }
+
+    /* Responsive design para herramientas */
+    @media (max-width: 768px) {
+      main {
+        padding: 1rem;
+        font-size: 16px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .intro-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+      
+      .tools-showcase,
+      .intro-section,
+      .features-highlight,
+      .quick-nav {
+        margin: 2rem 0;
+        padding: 1.5rem;
+      }
+      
+      .tools-showcase h2,
+      .intro-section h2,
+      .features-highlight h2,
+      .quick-nav h2 {
+        font-size: 2rem;
+      }
+
+      .link-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .showcase-description {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+      }
     }
   </style>
 </Layout>
