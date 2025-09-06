@@ -1,0 +1,583 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Simulación Ley de Hooke - Physics Lab">
+	<main>
+		<div class="hooke-container">
+			<h1>🔗 Simulación de la Ley de Hooke</h1>
+			<p class="description">
+				Experimenta con un sistema masa-resorte y observa cómo las fuerzas y la energía cambian según las variables del sistema.
+			</p>
+
+			<div class="simulation-layout">
+				<!-- Panel de controles -->
+				<div class="controls-panel">
+					<h3>⚙️ Controles</h3>
+					
+					<div class="control-group">
+						<label for="spring-constant">Constante del Resorte (k)</label>
+						<input type="range" id="spring-constant" min="1" max="100" value="10" step="0.1">
+						<span id="k-value">10.0</span> N/m
+					</div>
+
+					<div class="control-group">
+						<label for="mass">Masa (m)</label>
+						<input type="range" id="mass" min="0.1" max="10" value="1" step="0.1">
+						<span id="m-value">1.0</span> kg
+					</div>
+
+					<div class="control-group">
+						<label for="gravity">Gravedad (g)</label>
+						<input type="range" id="gravity" min="1" max="15" value="9.8" step="0.1">
+						<span id="g-value">9.8</span> m/s²
+					</div>
+
+					<div class="control-group">
+						<button id="reset-simulation" class="reset-btn">🔄 Reiniciar</button>
+						<button id="start-oscillation" class="oscillate-btn">🎭 Oscilar</button>
+					</div>
+				</div>
+
+				<!-- Simulación visual -->
+				<div class="simulation-panel">
+					<div class="simulation-container" id="simulation-container">
+						<!-- La simulación se renderiza aquí -->
+					</div>
+				</div>
+
+				<!-- Panel de resultados -->
+				<div class="results-panel">
+					<h3>📊 Resultados</h3>
+					
+					<div class="result-item">
+						<span class="label">Elongación (x):</span>
+						<span id="elongation" class="value">0.00 m</span>
+					</div>
+
+					<div class="result-item">
+						<span class="label">Fuerza Elástica (Fₖ):</span>
+						<span id="elastic-force" class="value">0.00 N</span>
+					</div>
+
+					<div class="result-item">
+						<span class="label">Fuerza Gravitatoria (Fₘ):</span>
+						<span id="gravitational-force" class="value">0.00 N</span>
+					</div>
+
+					<div class="result-item">
+						<span class="label">Energía Potencial Elástica (U):</span>
+						<span id="elastic-energy" class="value">0.00 J</span>
+					</div>
+
+					<div class="equilibrium-info">
+						<h4>⚖️ En Equilibrio:</h4>
+						<p>Fₖ = Fₘ cuando x = mg/k</p>
+						<p>Posición de equilibrio: <span id="equilibrium-position">0.00 m</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script>
+		// @ts-nocheck
+		class HookeSimulation {
+			constructor() {
+				this.canvas = null;
+				this.ctx = null;
+				this.animationId = null;
+				this.isOscillating = false;
+				this.time = 0;
+				this.amplitude = 0;
+				this.frequency = 0;
+				this.damping = 0.02;
+				
+				this.k = 10; // Constante del resorte
+				this.m = 1;  // Masa
+				this.g = 9.8; // Gravedad
+				
+				this.equilibriumX = 0; // Posición de equilibrio
+				this.currentX = 0; // Posición actual
+				
+				this.init();
+				this.setupEventListeners();
+				this.calculate();
+				this.render();
+			}
+
+			init() {
+				const container = document.getElementById('simulation-container');
+				if (!container) return;
+				
+				this.canvas = document.createElement('canvas');
+				this.canvas.width = 400;
+				this.canvas.height = 500;
+				this.ctx = this.canvas.getContext('2d');
+				container.appendChild(this.canvas);
+			}
+
+			setupEventListeners() {
+				const kSlider = document.getElementById('spring-constant');
+				const mSlider = document.getElementById('mass');
+				const gSlider = document.getElementById('gravity');
+				const resetBtn = document.getElementById('reset-simulation');
+				const oscillateBtn = document.getElementById('start-oscillation');
+
+				kSlider?.addEventListener('input', (e) => {
+					this.k = parseFloat(e.target.value);
+					const kValue = document.getElementById('k-value');
+					if (kValue) kValue.textContent = this.k.toFixed(1);
+					this.calculate();
+					this.render();
+				});
+
+				mSlider?.addEventListener('input', (e) => {
+					this.m = parseFloat(e.target.value);
+					const mValue = document.getElementById('m-value');
+					if (mValue) mValue.textContent = this.m.toFixed(1);
+					this.calculate();
+					this.render();
+				});
+
+				gSlider?.addEventListener('input', (e) => {
+					this.g = parseFloat(e.target.value);
+					const gValue = document.getElementById('g-value');
+					if (gValue) gValue.textContent = this.g.toFixed(1);
+					this.calculate();
+					this.render();
+				});
+
+				resetBtn?.addEventListener('click', () => {
+					this.reset();
+				});
+
+				oscillateBtn?.addEventListener('click', () => {
+					this.startOscillation();
+				});
+			}
+
+			calculate() {
+				// Calcular posición de equilibrio
+				this.equilibriumX = (this.m * this.g) / this.k;
+				
+				if (!this.isOscillating) {
+					this.currentX = this.equilibriumX;
+				}
+
+				// Actualizar valores en la interfaz
+				this.updateResults();
+			}
+
+			updateResults() {
+				const elongation = this.currentX;
+				const elasticForce = this.k * elongation;
+				const gravitationalForce = this.m * this.g;
+				const elasticEnergy = 0.5 * this.k * elongation * elongation;
+
+				const elongationEl = document.getElementById('elongation');
+				const elasticForceEl = document.getElementById('elastic-force');
+				const gravitationalForceEl = document.getElementById('gravitational-force');
+				const elasticEnergyEl = document.getElementById('elastic-energy');
+				const equilibriumPositionEl = document.getElementById('equilibrium-position');
+
+				if (elongationEl) elongationEl.textContent = `${elongation.toFixed(3)} m`;
+				if (elasticForceEl) elasticForceEl.textContent = `${elasticForce.toFixed(2)} N`;
+				if (gravitationalForceEl) gravitationalForceEl.textContent = `${gravitationalForce.toFixed(2)} N`;
+				if (elasticEnergyEl) elasticEnergyEl.textContent = `${elasticEnergy.toFixed(3)} J`;
+				if (equilibriumPositionEl) equilibriumPositionEl.textContent = `${this.equilibriumX.toFixed(3)} m`;
+			}
+
+			startOscillation() {
+				if (this.isOscillating) {
+					this.stopOscillation();
+					return;
+				}
+
+				this.isOscillating = true;
+				this.time = 0;
+				this.amplitude = this.equilibriumX * 0.3; // 30% de la posición de equilibrio
+				this.frequency = Math.sqrt(this.k / this.m) / (2 * Math.PI);
+				
+				const oscillateBtn = document.getElementById('start-oscillation');
+				if (oscillateBtn) oscillateBtn.textContent = '⏹️ Parar';
+				this.animate();
+			}
+
+			stopOscillation() {
+				this.isOscillating = false;
+				this.currentX = this.equilibriumX;
+				const oscillateBtn = document.getElementById('start-oscillation');
+				if (oscillateBtn) oscillateBtn.textContent = '🎭 Oscilar';
+				if (this.animationId) {
+					cancelAnimationFrame(this.animationId);
+				}
+				this.calculate();
+				this.render();
+			}
+
+			animate() {
+				if (!this.isOscillating) return;
+
+				this.time += 0.016; // ~60fps
+				
+				// Movimiento armónico simple amortiguado
+				const dampingFactor = Math.exp(-this.damping * this.time);
+				const oscillation = this.amplitude * dampingFactor * Math.cos(2 * Math.PI * this.frequency * this.time);
+				this.currentX = this.equilibriumX + oscillation;
+
+				// Parar la oscilación cuando la amplitud sea muy pequeña
+				if (dampingFactor < 0.01) {
+					this.stopOscillation();
+					return;
+				}
+
+				this.updateResults();
+				this.render();
+				this.animationId = requestAnimationFrame(() => this.animate());
+			}
+
+			reset() {
+				this.stopOscillation();
+				this.time = 0;
+				this.calculate();
+				this.render();
+			}
+
+			render() {
+				if (!this.ctx || !this.canvas) return;
+				
+				const ctx = this.ctx;
+				const canvas = this.canvas;
+				
+				// Limpiar canvas
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+				// Detectar tema para colores
+				const isLight = document.documentElement.classList.contains('light-theme');
+				const bgColor = isLight ? '#f7f7f7' : '#13151a';
+				const textColor = isLight ? '#181818' : '#ffffff';
+				const springColor = isLight ? '#007bff' : '#8a3aea';
+				
+				// Fondo
+				ctx.fillStyle = bgColor;
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+				// Configurar origen y escala
+				const centerX = canvas.width / 2;
+				const topY = 50;
+				const scale = 200; // pixels por metro
+
+				// Dibujar soporte fijo
+				ctx.strokeStyle = textColor;
+				ctx.lineWidth = 4;
+				ctx.beginPath();
+				ctx.moveTo(centerX - 50, topY);
+				ctx.lineTo(centerX + 50, topY);
+				ctx.stroke();
+
+				// Dibujar resorte
+				ctx.strokeStyle = springColor;
+				ctx.lineWidth = 3;
+				const springLength = this.currentX * scale;
+				const coils = 10;
+				const coilWidth = 20;
+				
+				ctx.beginPath();
+				ctx.moveTo(centerX, topY);
+				
+				for (let i = 0; i <= coils; i++) {
+					const y = topY + (i / coils) * springLength;
+					const x = centerX + (i % 2 === 0 ? 0 : (i % 4 === 1 ? coilWidth : -coilWidth));
+					ctx.lineTo(x, y);
+				}
+				ctx.lineTo(centerX, topY + springLength);
+				ctx.stroke();
+
+				// Dibujar masa
+				const massY = topY + springLength;
+				const massSize = Math.max(20, Math.min(40, this.m * 20));
+				
+				ctx.fillStyle = '#ff6b6b';
+				ctx.fillRect(centerX - massSize/2, massY, massSize, massSize);
+				ctx.strokeStyle = textColor;
+				ctx.lineWidth = 2;
+				ctx.strokeRect(centerX - massSize/2, massY, massSize, massSize);
+
+				// Dibujar vectores de fuerza
+				const vectorScale = 0.02;
+				
+				// Fuerza gravitatoria (hacia abajo)
+				const fgMagnitude = this.m * this.g * vectorScale * scale;
+				ctx.strokeStyle = '#ff4757';
+				ctx.lineWidth = 3;
+				this.drawArrow(ctx, centerX + massSize/2 + 10, massY + massSize/2, 
+							  centerX + massSize/2 + 10, massY + massSize/2 + fgMagnitude);
+				
+				// Etiqueta Fg
+				ctx.fillStyle = '#ff4757';
+				ctx.font = '14px Arial';
+				ctx.fillText('Fg', centerX + massSize/2 + 15, massY + massSize/2 + fgMagnitude/2);
+
+				// Fuerza elástica (hacia arriba)
+				const fkMagnitude = this.k * this.currentX * vectorScale * scale;
+				ctx.strokeStyle = '#3742fa';
+				this.drawArrow(ctx, centerX - massSize/2 - 10, massY + massSize/2 + fkMagnitude, 
+							  centerX - massSize/2 - 10, massY + massSize/2);
+				
+				// Etiqueta Fk
+				ctx.fillStyle = '#3742fa';
+				ctx.fillText('Fk', centerX - massSize/2 - 25, massY + massSize/2 + fkMagnitude/2);
+
+				// Dibujar línea de equilibrio
+				if (this.equilibriumX > 0) {
+					const eqY = topY + this.equilibriumX * scale;
+					ctx.strokeStyle = textColor;
+					ctx.setLineDash([5, 5]);
+					ctx.lineWidth = 1;
+					ctx.beginPath();
+					ctx.moveTo(50, eqY);
+					ctx.lineTo(canvas.width - 50, eqY);
+					ctx.stroke();
+					ctx.setLineDash([]);
+					
+					ctx.fillStyle = textColor;
+					ctx.font = '12px Arial';
+					ctx.fillText('Equilibrio', 10, eqY - 5);
+				}
+
+				// Mostrar medidas
+				ctx.fillStyle = textColor;
+				ctx.font = '12px Arial';
+				ctx.fillText(`x = ${this.currentX.toFixed(3)} m`, 10, canvas.height - 40);
+				ctx.fillText(`k = ${this.k} N/m`, 10, canvas.height - 25);
+				ctx.fillText(`m = ${this.m} kg`, 10, canvas.height - 10);
+			}
+
+			drawArrow(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number): void {
+				const headLength = 10;
+				const angle = Math.atan2(y2 - y1, x2 - x1);
+				
+				// Línea principal
+				ctx.beginPath();
+				ctx.moveTo(x1, y1);
+				ctx.lineTo(x2, y2);
+				ctx.stroke();
+				
+				// Punta de la flecha
+				ctx.beginPath();
+				ctx.moveTo(x2, y2);
+				ctx.lineTo(x2 - headLength * Math.cos(angle - Math.PI/6), y2 - headLength * Math.sin(angle - Math.PI/6));
+				ctx.moveTo(x2, y2);
+				ctx.lineTo(x2 - headLength * Math.cos(angle + Math.PI/6), y2 - headLength * Math.sin(angle + Math.PI/6));
+				ctx.stroke();
+			}
+		}
+
+		// Inicializar la simulación cuando se carga la página
+		document.addEventListener('DOMContentLoaded', () => {
+			new HookeSimulation();
+		});
+	</script>
+</Layout>
+
+<style>
+	.hooke-container {
+		max-width: 1400px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	h1 {
+		text-align: center;
+		color: var(--accent-light);
+		margin-bottom: 0.5rem;
+	}
+
+	html.light-theme h1 {
+		color: #007bff;
+	}
+
+	.description {
+		text-align: center;
+		margin-bottom: 2rem;
+		font-size: 1.1rem;
+		opacity: 0.9;
+	}
+
+	.simulation-layout {
+		display: grid;
+		grid-template-columns: 300px 1fr 300px;
+		gap: 2rem;
+		margin-top: 2rem;
+	}
+
+	.controls-panel, .results-panel {
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 10px;
+		padding: 1.5rem;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-sizing: border-box;
+		overflow: hidden;
+	}
+
+	html.light-theme .controls-panel, 
+	html.light-theme .results-panel {
+		background: rgba(0, 0, 0, 0.03);
+		border: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.simulation-panel {
+		display: flex;
+		justify-content: center;
+		align-items: flex-start;
+	}
+
+	.simulation-container {
+		border: 2px solid rgba(255, 255, 255, 0.2);
+		border-radius: 10px;
+		background: rgba(255, 255, 255, 0.02);
+		overflow: hidden;
+	}
+
+	html.light-theme .simulation-container {
+		border: 2px solid rgba(0, 0, 0, 0.2);
+		background: rgba(0, 0, 0, 0.02);
+	}
+
+	h3 {
+		margin-bottom: 1rem;
+		color: var(--accent-light);
+	}
+
+	html.light-theme h3 {
+		color: #007bff;
+	}
+
+	.control-group {
+		margin-bottom: 1.5rem;
+	}
+
+	.control-group label {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-weight: 500;
+	}
+
+	input[type="range"] {
+		width: calc(100% - 4px);
+		max-width: 100%;
+		margin: 0.5rem 0;
+		accent-color: var(--accent);
+		box-sizing: border-box;
+	}
+
+	.reset-btn, .oscillate-btn {
+		width: 100%;
+		padding: 0.8rem;
+		margin: 0.5rem 0;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		font-weight: bold;
+		transition: all 0.3s ease;
+	}
+
+	.reset-btn {
+		background: #ff6b6b;
+		color: white;
+	}
+
+	.reset-btn:hover {
+		background: #ff5252;
+		transform: translateY(-2px);
+	}
+
+	.oscillate-btn {
+		background: var(--accent);
+		color: white;
+	}
+
+	.oscillate-btn:hover {
+		background: rgb(var(--accent-light));
+		transform: translateY(-2px);
+	}
+
+	.result-item {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 1rem;
+		padding: 0.5rem;
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 5px;
+	}
+
+	html.light-theme .result-item {
+		background: rgba(0, 0, 0, 0.05);
+	}
+
+	.label {
+		font-weight: 500;
+	}
+
+	.value {
+		font-family: monospace;
+		font-weight: bold;
+		color: var(--accent-light);
+	}
+
+	html.light-theme .value {
+		color: #007bff;
+	}
+
+	.equilibrium-info {
+		margin-top: 1.5rem;
+		padding: 1rem;
+		background: rgba(136, 58, 234, 0.1);
+		border-radius: 5px;
+		border-left: 4px solid var(--accent);
+	}
+
+	html.light-theme .equilibrium-info {
+		background: rgba(0, 123, 255, 0.1);
+		border-left: 4px solid #007bff;
+	}
+
+	.equilibrium-info h4 {
+		margin-bottom: 0.5rem;
+		color: var(--accent-light);
+	}
+
+	html.light-theme .equilibrium-info h4 {
+		color: #007bff;
+	}
+
+	.equilibrium-info p {
+		margin: 0.25rem 0;
+		font-size: 0.9rem;
+	}
+
+	/* Responsive Design */
+	@media (max-width: 1200px) {
+		.simulation-layout {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+		
+		.controls-panel, .results-panel {
+			max-width: 600px;
+			margin: 0 auto;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.hooke-container {
+			padding: 1rem;
+		}
+		
+		.simulation-container canvas {
+			max-width: 100%;
+			height: auto;
+		}
+	}
+</style>

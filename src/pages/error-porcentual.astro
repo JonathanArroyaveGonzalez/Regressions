@@ -1,0 +1,756 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Cálculo de Porcentaje de Error - Physics Lab">
+	<main>
+		<div class="error-container">
+			<h1>🎯 Calculadora de Porcentaje de Error</h1>
+			<p class="description">
+				Calcula la precisión de tus mediciones experimentales comparándolas con los valores teóricos esperados.
+			</p>
+
+			<div class="calculator-layout">
+				<!-- Panel de entrada -->
+				<div class="input-panel">
+					<h3>📊 Datos de Entrada</h3>
+					
+					<div class="input-group">
+						<label for="theoretical-value">Valor Teórico</label>
+						<input type="number" id="theoretical-value" step="any" placeholder="Ingrese el valor teórico">
+						<small>Valor esperado según la teoría o fórmula</small>
+					</div>
+
+					<div class="input-group">
+						<label for="experimental-value">Valor Experimental</label>
+						<input type="number" id="experimental-value" step="any" placeholder="Ingrese el valor experimental">
+						<small>Valor obtenido en el experimento</small>
+					</div>
+
+					<div class="button-group">
+						<button id="calculate-btn" class="calculate-btn">🧮 Calcular Error</button>
+						<button id="clear-btn" class="clear-btn">🗑️ Limpiar</button>
+					</div>
+				</div>
+
+				<!-- Panel de resultados -->
+				<div class="results-panel">
+					<h3>📈 Resultados</h3>
+					
+					<div id="results-content" class="results-content">
+						<div class="placeholder">
+							<p>🔢 Ingresa los valores y presiona "Calcular Error" para ver los resultados</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Panel de información -->
+				<div class="info-panel">
+					<h3>ℹ️ Información</h3>
+					
+					<div class="formula-section">
+						<h4>📝 Fórmula del Porcentaje de Error</h4>
+						<div class="formula">
+							<p><strong>% Error = |Valor Teórico - Valor Experimental| / |Valor Teórico| × 100</strong></p>
+						</div>
+					</div>
+
+					<div class="interpretation-section">
+						<h4>🎯 Interpretación de Resultados</h4>
+						<div class="interpretation-scale">
+							<div class="scale-item excellent">
+								<span class="range">0% - 2%</span>
+								<span class="label">Excelente</span>
+							</div>
+							<div class="scale-item good">
+								<span class="range">2% - 5%</span>
+								<span class="label">Bueno</span>
+							</div>
+							<div class="scale-item acceptable">
+								<span class="range">5% - 10%</span>
+								<span class="label">Aceptable</span>
+							</div>
+							<div class="scale-item poor">
+								<span class="range">> 10%</span>
+								<span class="label">Revisar</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="tips-section">
+						<h4>💡 Consejos</h4>
+						<ul>
+							<li>Un porcentaje de error bajo indica mayor precisión</li>
+							<li>Considera las fuentes de error en tu experimento</li>
+							<li>Repite las mediciones para mejorar la precisión</li>
+							<li>Verifica la calibración de tus instrumentos</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<!-- Panel de historial -->
+			<div class="history-panel">
+				<h3>📋 Historial de Cálculos</h3>
+				<div id="history-content" class="history-content">
+					<p class="no-history">No hay cálculos realizados aún</p>
+				</div>
+				<button id="clear-history-btn" class="clear-history-btn" style="display: none;">🗑️ Limpiar Historial</button>
+			</div>
+		</div>
+	</main>
+
+	<script>
+		interface CalculationResult {
+			theoretical: number;
+			experimental: number;
+			absoluteError: number;
+			relativeError: number;
+			percentageError: number;
+			quality: QualityResult;
+			timestamp: string;
+		}
+
+		interface QualityResult {
+			level: string;
+			text: string;
+			emoji: string;
+		}
+
+		class ErrorCalculator {
+			history: CalculationResult[];
+
+			constructor() {
+				this.history = JSON.parse(localStorage.getItem('errorCalculatorHistory') || '[]');
+				this.setupEventListeners();
+				this.displayHistory();
+			}
+
+			setupEventListeners() {
+				const calculateBtn = document.getElementById('calculate-btn');
+				const clearBtn = document.getElementById('clear-btn');
+				const clearHistoryBtn = document.getElementById('clear-history-btn');
+				const theoreticalInput = document.getElementById('theoretical-value');
+				const experimentalInput = document.getElementById('experimental-value');
+
+				calculateBtn?.addEventListener('click', () => this.calculateError());
+				clearBtn?.addEventListener('click', () => this.clearInputs());
+				clearHistoryBtn?.addEventListener('click', () => this.clearHistory());
+
+				// Calcular automáticamente cuando se cambien los valores
+				theoreticalInput?.addEventListener('input', () => this.autoCalculate());
+				experimentalInput?.addEventListener('input', () => this.autoCalculate());
+
+				// Permitir cálculo con Enter
+				[theoreticalInput, experimentalInput].forEach(input => {
+					input?.addEventListener('keypress', (e) => {
+						if (e.key === 'Enter') {
+							this.calculateError();
+						}
+					});
+				});
+			}
+
+			autoCalculate() {
+				const theoretical = (document.getElementById('theoretical-value') as HTMLInputElement)?.value;
+				const experimental = (document.getElementById('experimental-value') as HTMLInputElement)?.value;
+				
+				if (theoretical && experimental && theoretical !== '' && experimental !== '') {
+					this.calculateError(false); // No guardar en historial automáticamente
+				}
+			}
+
+			calculateError(saveToHistory = true) {
+				const theoreticalInput = document.getElementById('theoretical-value') as HTMLInputElement;
+				const experimentalInput = document.getElementById('experimental-value') as HTMLInputElement;
+				const resultsContent = document.getElementById('results-content');
+
+				if (!theoreticalInput || !experimentalInput || !resultsContent) return;
+
+				const theoreticalValue = parseFloat(theoreticalInput.value);
+				const experimentalValue = parseFloat(experimentalInput.value);
+
+				// Validar entradas
+				if (isNaN(theoreticalValue) || isNaN(experimentalValue)) {
+					this.showError('Por favor, ingresa valores numéricos válidos.');
+					return;
+				}
+
+				if (theoreticalValue === 0) {
+					this.showError('El valor teórico no puede ser cero.');
+					return;
+				}
+
+				// Calcular porcentaje de error
+				const absoluteError = Math.abs(theoreticalValue - experimentalValue);
+				const relativeError = absoluteError / Math.abs(theoreticalValue);
+				const percentageError = relativeError * 100;
+
+				// Determinar calidad del resultado
+				const quality = this.getQuality(percentageError);
+
+				// Mostrar resultados
+				const timestamp = new Date().toLocaleString();
+				const result: CalculationResult = {
+					theoretical: theoreticalValue,
+					experimental: experimentalValue,
+					absoluteError,
+					relativeError,
+					percentageError,
+					quality,
+					timestamp
+				};
+
+				this.displayResults(result);
+
+				// Guardar en historial si se solicita
+				if (saveToHistory) {
+					this.addToHistory(result);
+				}
+			}
+
+			getQuality(percentageError: number): QualityResult {
+				if (percentageError <= 2) return { level: 'excellent', text: 'Excelente', emoji: '🟢' };
+				if (percentageError <= 5) return { level: 'good', text: 'Bueno', emoji: '🟡' };
+				if (percentageError <= 10) return { level: 'acceptable', text: 'Aceptable', emoji: '🟠' };
+				return { level: 'poor', text: 'Revisar', emoji: '🔴' };
+			}
+
+			displayResults(results: CalculationResult): void {
+				const resultsContent = document.getElementById('results-content');
+				if (!resultsContent) return;
+
+				resultsContent.innerHTML = `
+					<div class="result-summary ${results.quality.level}">
+						<div class="error-percentage">
+							${results.quality.emoji} ${results.percentageError.toFixed(3)}%
+						</div>
+						<div class="quality-indicator">
+							${results.quality.text}
+						</div>
+					</div>
+
+					<div class="detailed-results">
+						<div class="result-row">
+							<span class="label">Valor Teórico:</span>
+							<span class="value">${results.theoretical}</span>
+						</div>
+						<div class="result-row">
+							<span class="label">Valor Experimental:</span>
+							<span class="value">${results.experimental}</span>
+						</div>
+						<div class="result-row">
+							<span class="label">Error Absoluto:</span>
+							<span class="value">${results.absoluteError.toFixed(6)}</span>
+						</div>
+						<div class="result-row">
+							<span class="label">Error Relativo:</span>
+							<span class="value">${results.relativeError.toFixed(6)}</span>
+						</div>
+						<div class="result-row highlight">
+							<span class="label">Porcentaje de Error:</span>
+							<span class="value">${results.percentageError.toFixed(3)}%</span>
+						</div>
+					</div>
+
+					<div class="calculation-steps">
+						<h4>🔍 Pasos del Cálculo</h4>
+						<ol>
+							<li>Error Absoluto = |${results.theoretical} - ${results.experimental}| = ${results.absoluteError.toFixed(6)}</li>
+							<li>Error Relativo = ${results.absoluteError.toFixed(6)} / |${results.theoretical}| = ${results.relativeError.toFixed(6)}</li>
+							<li>Porcentaje de Error = ${results.relativeError.toFixed(6)} × 100 = ${results.percentageError.toFixed(3)}%</li>
+						</ol>
+					</div>
+				`;
+			}
+
+			showError(message: string): void {
+				const resultsContent = document.getElementById('results-content');
+				if (!resultsContent) return;
+
+				resultsContent.innerHTML = `
+					<div class="error-message">
+						<p>❌ ${message}</p>
+					</div>
+				`;
+			}
+
+			clearInputs() {
+				const theoreticalInput = document.getElementById('theoretical-value') as HTMLInputElement;
+				const experimentalInput = document.getElementById('experimental-value') as HTMLInputElement;
+				const resultsContent = document.getElementById('results-content');
+
+				theoreticalInput && (theoreticalInput.value = '');
+				experimentalInput && (experimentalInput.value = '');
+				
+				if (resultsContent) {
+					resultsContent.innerHTML = `
+						<div class="placeholder">
+							<p>🔢 Ingresa los valores y presiona "Calcular Error" para ver los resultados</p>
+						</div>
+					`;
+				}
+			}
+
+			addToHistory(calculation: CalculationResult): void {
+				this.history.unshift(calculation);
+				// Limitar a los últimos 10 cálculos
+				if (this.history.length > 10) {
+					this.history = this.history.slice(0, 10);
+				}
+				localStorage.setItem('errorCalculatorHistory', JSON.stringify(this.history));
+				this.displayHistory();
+			}
+
+			displayHistory() {
+				const historyContent = document.getElementById('history-content');
+				const clearHistoryBtn = document.getElementById('clear-history-btn');
+
+				if (!historyContent || !clearHistoryBtn) return;
+
+				if (this.history.length === 0) {
+					historyContent.innerHTML = '<p class="no-history">No hay cálculos realizados aún</p>';
+					clearHistoryBtn.style.display = 'none';
+					return;
+				}
+
+				clearHistoryBtn.style.display = 'block';
+				
+				const historyHTML = this.history.map((calc: CalculationResult, index: number) => `
+					<div class="history-item ${calc.quality.level}">
+						<div class="history-header">
+							<span class="history-index">#${index + 1}</span>
+							<span class="history-timestamp">${calc.timestamp}</span>
+						</div>
+						<div class="history-content">
+							<div class="history-values">
+								<span>Teórico: ${calc.theoretical}</span>
+								<span>Experimental: ${calc.experimental}</span>
+							</div>
+							<div class="history-result">
+								${calc.quality.emoji} ${calc.percentageError.toFixed(3)}% (${calc.quality.text})
+							</div>
+						</div>
+					</div>
+				`).join('');
+
+				historyContent.innerHTML = historyHTML;
+			}
+
+			clearHistory() {
+				this.history = [];
+				localStorage.removeItem('errorCalculatorHistory');
+				this.displayHistory();
+			}
+		}
+
+		// Inicializar la calculadora cuando se carga la página
+		document.addEventListener('DOMContentLoaded', () => {
+			new ErrorCalculator();
+		});
+	</script>
+</Layout>
+
+<style>
+	.error-container {
+		max-width: 1400px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	h1 {
+		text-align: center;
+		color: var(--accent-light);
+		margin-bottom: 0.5rem;
+	}
+
+	html.light-theme h1 {
+		color: #007bff;
+	}
+
+	.description {
+		text-align: center;
+		margin-bottom: 2rem;
+		font-size: 1.1rem;
+		opacity: 0.9;
+	}
+
+	.calculator-layout {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 2rem;
+		margin-bottom: 2rem;
+	}
+
+	.input-panel, .results-panel, .info-panel {
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 10px;
+		padding: 1.5rem;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	html.light-theme .input-panel, 
+	html.light-theme .results-panel, 
+	html.light-theme .info-panel {
+		background: rgba(0, 0, 0, 0.03);
+		border: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	h3 {
+		margin-bottom: 1rem;
+		color: var(--accent-light);
+	}
+
+	html.light-theme h3 {
+		color: #007bff;
+	}
+
+	.input-group {
+		margin-bottom: 1.5rem;
+	}
+
+	.input-group label {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-weight: 500;
+	}
+
+	.input-group input {
+		width: 100%;
+		padding: 0.8rem;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 5px;
+		background: rgba(255, 255, 255, 0.05);
+		color: inherit;
+		font-size: 1rem;
+	}
+
+	html.light-theme .input-group input {
+		border: 1px solid rgba(0, 0, 0, 0.2);
+		background: rgba(0, 0, 0, 0.05);
+	}
+
+	.input-group small {
+		display: block;
+		margin-top: 0.25rem;
+		opacity: 0.7;
+		font-size: 0.85rem;
+	}
+
+	.button-group {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.calculate-btn, .clear-btn {
+		flex: 1;
+		padding: 0.8rem;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		font-weight: bold;
+		transition: all 0.3s ease;
+	}
+
+	.calculate-btn {
+		background: var(--accent);
+		color: white;
+	}
+
+	.calculate-btn:hover {
+		background: rgb(var(--accent-light));
+		transform: translateY(-2px);
+	}
+
+	.clear-btn {
+		background: #6c757d;
+		color: white;
+	}
+
+	.clear-btn:hover {
+		background: #5a6268;
+		transform: translateY(-2px);
+	}
+
+	.results-content {
+		min-height: 200px;
+	}
+
+	.placeholder {
+		text-align: center;
+		padding: 2rem 1rem;
+		opacity: 0.7;
+	}
+
+	.result-summary {
+		text-align: center;
+		padding: 1.5rem;
+		border-radius: 10px;
+		margin-bottom: 1.5rem;
+	}
+
+	.result-summary.excellent {
+		background: rgba(40, 167, 69, 0.2);
+		border: 2px solid #28a745;
+	}
+
+	.result-summary.good {
+		background: rgba(255, 193, 7, 0.2);
+		border: 2px solid #ffc107;
+	}
+
+	.result-summary.acceptable {
+		background: rgba(253, 126, 20, 0.2);
+		border: 2px solid #fd7e14;
+	}
+
+	.result-summary.poor {
+		background: rgba(220, 53, 69, 0.2);
+		border: 2px solid #dc3545;
+	}
+
+	.error-percentage {
+		font-size: 2rem;
+		font-weight: bold;
+		margin-bottom: 0.5rem;
+	}
+
+	.quality-indicator {
+		font-size: 1.1rem;
+		font-weight: 500;
+	}
+
+	.detailed-results {
+		margin-bottom: 1.5rem;
+	}
+
+	.result-row {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.5rem;
+		margin-bottom: 0.5rem;
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 5px;
+	}
+
+	html.light-theme .result-row {
+		background: rgba(0, 0, 0, 0.05);
+	}
+
+	.result-row.highlight {
+		background: rgba(136, 58, 234, 0.2);
+		font-weight: bold;
+	}
+
+	html.light-theme .result-row.highlight {
+		background: rgba(0, 123, 255, 0.2);
+	}
+
+	.label {
+		font-weight: 500;
+	}
+
+	.value {
+		font-family: monospace;
+		font-weight: bold;
+	}
+
+	.calculation-steps {
+		background: rgba(255, 255, 255, 0.05);
+		padding: 1rem;
+		border-radius: 5px;
+		border-left: 4px solid var(--accent);
+	}
+
+	html.light-theme .calculation-steps {
+		background: rgba(0, 0, 0, 0.05);
+		border-left: 4px solid #007bff;
+	}
+
+	.calculation-steps h4 {
+		margin-bottom: 0.5rem;
+		color: var(--accent-light);
+	}
+
+	html.light-theme .calculation-steps h4 {
+		color: #007bff;
+	}
+
+	.calculation-steps ol {
+		margin: 0;
+		padding-left: 1.5rem;
+	}
+
+	.calculation-steps li {
+		margin-bottom: 0.25rem;
+		font-family: monospace;
+	}
+
+	.error-message {
+		text-align: center;
+		padding: 2rem 1rem;
+		color: #dc3545;
+		background: rgba(220, 53, 69, 0.1);
+		border-radius: 5px;
+	}
+
+	.formula {
+		background: rgba(255, 255, 255, 0.05);
+		padding: 1rem;
+		border-radius: 5px;
+		margin-bottom: 1rem;
+		text-align: center;
+	}
+
+	html.light-theme .formula {
+		background: rgba(0, 0, 0, 0.05);
+	}
+
+	.interpretation-scale {
+		margin-bottom: 1rem;
+	}
+
+	.scale-item {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.5rem;
+		margin-bottom: 0.25rem;
+		border-radius: 5px;
+	}
+
+	.scale-item.excellent {
+		background: rgba(40, 167, 69, 0.2);
+	}
+
+	.scale-item.good {
+		background: rgba(255, 193, 7, 0.2);
+	}
+
+	.scale-item.acceptable {
+		background: rgba(253, 126, 20, 0.2);
+	}
+
+	.scale-item.poor {
+		background: rgba(220, 53, 69, 0.2);
+	}
+
+	.tips-section ul {
+		margin: 0;
+		padding-left: 1.5rem;
+	}
+
+	.tips-section li {
+		margin-bottom: 0.5rem;
+	}
+
+	.history-panel {
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 10px;
+		padding: 1.5rem;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	html.light-theme .history-panel {
+		background: rgba(0, 0, 0, 0.03);
+		border: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.history-content {
+		max-height: 400px;
+		overflow-y: auto;
+		margin-bottom: 1rem;
+	}
+
+	.history-item {
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 5px;
+		padding: 1rem;
+		margin-bottom: 0.5rem;
+		border-left: 4px solid transparent;
+	}
+
+	html.light-theme .history-item {
+		background: rgba(0, 0, 0, 0.05);
+	}
+
+	.history-item.excellent {
+		border-left-color: #28a745;
+	}
+
+	.history-item.good {
+		border-left-color: #ffc107;
+	}
+
+	.history-item.acceptable {
+		border-left-color: #fd7e14;
+	}
+
+	.history-item.poor {
+		border-left-color: #dc3545;
+	}
+
+	.history-header {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 0.5rem;
+		font-size: 0.85rem;
+		opacity: 0.8;
+	}
+
+	.history-values {
+		display: flex;
+		gap: 1rem;
+		margin-bottom: 0.5rem;
+		font-size: 0.9rem;
+	}
+
+	.history-result {
+		font-weight: bold;
+	}
+
+	.clear-history-btn {
+		width: 100%;
+		padding: 0.6rem;
+		background: #dc3545;
+		color: white;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		font-weight: bold;
+		transition: all 0.3s ease;
+	}
+
+	.clear-history-btn:hover {
+		background: #c82333;
+		transform: translateY(-2px);
+	}
+
+	.no-history {
+		text-align: center;
+		opacity: 0.7;
+		padding: 2rem 1rem;
+	}
+
+	/* Responsive Design */
+	@media (max-width: 1200px) {
+		.calculator-layout {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.error-container {
+			padding: 1rem;
+		}
+		
+		.button-group {
+			flex-direction: column;
+		}
+		
+		.history-values {
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+	}
+</style>
