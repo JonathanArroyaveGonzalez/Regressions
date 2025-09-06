@@ -1,0 +1,71 @@
+# Configuración Jekyll para GitHub Pages
+title: "Physics Lab - Laboratorio de Física"
+description: "Herramientas Interactivas para Análisis Físico y Estadístico"
+author: "Jonathan Arroyave González"
+url: "https://jonathanarroyavegonzalez.github.io"
+baseurl: "/Regressions"
+
+# Tema de GitHub Pages
+theme: minima
+remote_theme: pages-themes/cayman@v0.2.0
+
+# Configuración de Jekyll
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-github-metadata
+  - jekyll-relative-links
+
+# Configuración SEO
+github_username: JonathanArroyaveGonzalez
+repository: "JonathanArroyaveGonzalez/Regressions"
+
+# Configuración de archivos
+include:
+  - README.md
+  - docs/
+
+exclude:
+  - src/
+  - public/
+  - node_modules/
+  - package*.json
+  - tsconfig.json
+  - astro.config.mjs
+  - vercel.json
+  - dist/
+  - .astro/
+  - .vscode/
+  - .git/
+
+# Configuración de páginas
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
+# Mostrar README como página principal
+readme_index:
+  enabled: true
+
+# Configuración adicional
+show_downloads: true
+github:
+  repository_url: "https://github.com/JonathanArroyaveGonzalez/Regressions"
+  repository_nwo: "JonathanArroyaveGonzalez/Regressions"
+
+# Enlaces adicionales en el header
+header_pages:
+  - README.md
+
+# Footer
+footer_content: "© 2025 Jonathan Arroyave González. Proyecto bajo Licencia MIT."
